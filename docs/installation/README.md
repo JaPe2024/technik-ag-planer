@@ -39,6 +39,27 @@ docker compose -f deploy/docker-compose.yml ps        # alle Dienste „healthy�
 
 Beim Start des Web-Containers laufen die Datenbank-Migrationen automatisch. Die Dienste: `web` (Django), `worker` (Hintergrundaufgaben), `db` (PostgreSQL), `cache` (Redis), `caddy` (HTTPS).
 
+### Variante: hinter einem vorgeschalteten Reverse Proxy
+
+Übernimmt ein anderer Proxy (z. B. Nginx Proxy Manager) das HTTPS, spricht Caddy nur HTTP auf Port 80 (ADR 0016):
+
+1. In der `.env` `TRUSTED_PROXY` auf die Adresse setzen, mit der der Proxy beim Server ankommt. `ACME_EMAIL` entfällt, `DOMAIN` wird nicht ausgewertet.
+2. Im Proxy die Domain auf `http://<server>:80` weiterleiten und dort das Zertifikat und „Force SSL“ einrichten. HSTS setzt die App selbst, Websockets werden nicht gebraucht.
+3. Starten – in allen Befehlen dieser Anleitung beide Dateien angeben:
+
+   ```sh
+   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.proxy.yml up -d --build
+   ```
+
+4. Port 80 nur für den Proxy öffnen. Von Docker veröffentlichte Ports umgehen `ufw`, die Regel gehört deshalb ans Ende von `/etc/ufw/after.rules` (Netzwerkkarte und Adresse anpassen), danach `sudo ufw reload`:
+
+   ```
+   *filter
+   :DOCKER-USER - [0:0]
+   -A DOCKER-USER -i ens18 -p tcp -m conntrack --ctorigdstport 80 --ctdir ORIGINAL ! -s 192.0.2.10 -j DROP
+   COMMIT
+   ```
+
 ## 3. Betreiber-Konto und erste AG
 
 ```sh

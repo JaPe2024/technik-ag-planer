@@ -6,6 +6,12 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 
 ### Hinzugefügt
 
+**Betrieb**
+
+- Optionale Ergänzung für den Betrieb hinter einem vorgeschalteten Reverse Proxy (`deploy/docker-compose.proxy.yml`)
+- Behoben: Im Betrieb stürzte der Zeitplan des Workers ab (Datei nicht beschreibbar), sodass Erinnerungen, Aufräumen und nächtlicher Kalender-Abgleich ausfielen
+- Behoben: Fontconfig-Fehlermeldungen im Betrieb (kein beschreibbarer Cache-Ordner)
+
 **Wartung 1**
 
 - Push-Erinnerung auch vor zugesagten Terminen mit Uhrzeit (z. B. AG-Treffen), mit Ort

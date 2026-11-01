@@ -35,7 +35,9 @@ services:
 
   worker:
     <<: *app
-    command: ["celery", "-A", "config", "worker", "--beat", "--loglevel=info"]
+    # /app ist im Betrieb nicht beschreibbar, der Zeitplan liegt deshalb in /tmp
+    command: ["celery", "-A", "config", "worker", "--beat", "--loglevel=info",
+              "--schedule=/tmp/celerybeat-schedule"]
 
   db:
     image: postgres:17-alpine

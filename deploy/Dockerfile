@@ -38,6 +38,7 @@ ARG APP_VERSION=Entwicklung
 ENV APP_VERSION=${APP_VERSION} \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    XDG_CACHE_HOME=/tmp/.cache \
     PATH=/opt/venv/bin:$PATH \
     DJANGO_SETTINGS_MODULE=config.settings.prod \
     DJANGO_READ_ENV_FILE=false

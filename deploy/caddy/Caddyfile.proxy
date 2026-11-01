@@ -1,0 +1,28 @@
+# Betrieb hinter einem vorgeschalteten Reverse Proxy, der HTTPS übernimmt (ADR 0016).
+# Caddy spricht nur HTTP und glaubt die Weiterleitungs-Header nur von TRUSTED_PROXY.
+{
+	servers {
+		trusted_proxies static {$TRUSTED_PROXY}
+		# Den ersten Eintrag von X-Forwarded-For kann der Client frei setzen, X-Real-IP nicht
+		client_ip_headers X-Real-IP
+	}
+}
+
+:80 {
+	encode zstd gzip
+
+	header {
+		-Server
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+	}
+
+	# Größte Anfrage: Datei-Uploads bis 25 MB (GOOGLE_UPLOAD_MAX_MB) plus Formular
+	request_body {
+		max_size 30MB
+	}
+
+	reverse_proxy web:8000 {
+		# Django wertet den ersten Eintrag aus (apps.accounts.throttle.client_ip)
+		header_up X-Forwarded-For {client_ip}
+	}
+}

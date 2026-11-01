@@ -2,7 +2,7 @@
 
 Spezifikation: `docs/feature-liste.md` (nicht hier kopieren). Ablauf und Meilensteine: Abschnitt 15, Umsetzungsstand und Entscheidungen: Abschnitt 16 (nach jedem Meilenstein fortschreiben).
 
-**Stand: Alle 12 Meilensteine umgesetzt – Wartung und Ideen aus Abschnitt 16 („Vor dem Start“, „Ideen für später“).** Weiter mit Branch, Plan, PR wie bisher; neue Entscheidungen als ADR ab 0016.
+**Stand: Alle 12 Meilensteine umgesetzt – Wartung und Ideen aus Abschnitt 16 („Vor dem Start“, „Ideen für später“).** Weiter mit Branch, Plan, PR wie bisher; neue Entscheidungen als ADR ab 0017.
 
 ## Regeln
 

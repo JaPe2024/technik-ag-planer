@@ -1,0 +1,12 @@
+# Ergänzung für den Betrieb hinter einem vorgeschalteten Reverse Proxy (ADR 0016).
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.proxy.yml up -d
+# Braucht TRUSTED_PROXY in ../.env. Anleitung: docs/installation/README.md
+
+services:
+  caddy:
+    ports: !override
+      - "0.0.0.0:80:80"  # nur IPv4, die Firewall-Regel (Anleitung) gilt nur dafür
+    volumes:
+      - ./caddy/Caddyfile.proxy:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
