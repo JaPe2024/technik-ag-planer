@@ -20,7 +20,7 @@ Wirst du für einen Job angefragt, steht er auf dem Dashboard unter „Meine Job
 
 ## Kalender
 
-Kalender mit Monat, Woche und Agenda; „Meine“ zeigt nur deine Einträge. Jeder Eintrag lässt sich mit „In Kalender übernehmen“ als .ics-Datei in den eigenen Kalender holen. Hat die AG ein Google-Konto verbunden und dich freigegeben, kannst du den ganzen AG-Kalender abonnieren.
+Kalender mit Monat, Woche und Agenda; „Meine“ zeigt nur deine Einträge. Jeder Eintrag lässt sich mit „In privaten Kalender“ als Kopie in den eigenen Google- oder Apple-Kalender übernehmen, für andere Kalender gibt es eine Datei zum Herunterladen. Hat die AG ein Google-Konto verbunden und dich freigegeben, kannst du den ganzen AG-Kalender abonnieren.
 
 ## Board und Chats
 

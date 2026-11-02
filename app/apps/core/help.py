@@ -80,7 +80,9 @@ TOPICS = [
             ),
             Question(
                 "Wie bekomme ich die Termine in meinen Kalender?",
-                "Jeder Eintrag hat „In Kalender übernehmen“ (.ics-Datei). Hat die AG ein "
+                "Jeder Eintrag hat „In privaten Kalender“: Google, Apple oder als Datei. "
+                "Übernommen wird eine Kopie, spätere Änderungen kommen dort nicht an. "
+                "Hat die AG ein "
                 "Google-Konto verbunden, kannst du den AG-Kalender abonnieren, sobald der Owner "
                 "ihn "
                 "für deine Google-Adresse freigegeben hat (Link in der Kalender-Ansicht).",

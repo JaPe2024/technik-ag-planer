@@ -15,7 +15,8 @@ FEATURES = [
     ("Dashboard", "Nächste Produktion, meine Jobs, offene Crew-Anfragen"),
     (
         "Kalender",
-        "Monat, Woche, Agenda; Termine und Serien; Stundenraster; „Nicht verfügbar“; .ics",
+        "Monat, Woche, Agenda; Termine und Serien; Stundenraster; „Nicht verfügbar“; "
+        "Übernahme in den privaten Kalender",
     ),
     (
         "Produktionen",

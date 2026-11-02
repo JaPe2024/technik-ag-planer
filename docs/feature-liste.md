@@ -359,7 +359,7 @@ Diese Funktionen gelten für alle Mitglieder und begleiten Planung und Einteilun
 - Ohne verbundenes Google-Konto findet keine Übertragung statt; nach dem Verbinden werden bestehende Einträge nachgeholt
 - Wird das Konto getrennt, bleibt der Kalender im Google-Konto bestehen
 - Mitglieder können den Google-Kalender der AG über eine Freigabe abonnieren
-- Es gibt nur diesen einen Kalender, kein persönliches Abo; stattdessen lässt sich jeder einzelne Eintrag als .ics-Datei exportieren (Button z. B. „In Kalender übernehmen“), passend für Google Kalender, Outlook oder Apple Kalender
+- Es gibt nur diesen einen Kalender, kein persönliches Abo; stattdessen lässt sich jeder einzelne Eintrag mit dem Button „In privaten Kalender“ als Kopie übernehmen: Die Auswahl bietet Google Kalender (vorausgefüllter Termin ohne Datei, ohne Namen von Mitgliedern) und Apple Kalender (direkter Dialog, auf iPhone, iPad und Mac zuerst vorgeschlagen), für andere Kalender bleibt der Download als .ics-Datei
 - Nicht-verfügbar-Einträge der Mitglieder kommen mit in den AG-Kalender, aber zurückhaltend in Grau (in Google die Farbe „Graphit“) und mit klarem Titel, z. B. „Nicht verfügbar: Emma Schulz“
 
 **PDFs**
@@ -588,6 +588,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | – | Technik-Auswahl im Anfrage-Formular je AG | fertig | #18 |
 | – | Dashboard-Kachel und Navigations-Zähler für offene Technik-Anfragen | fertig | #19 |
 | – | Oberfläche: Nachfrage bei Anfragen, Kalender, Board auf dem Handy, Crew-Schalter, Produktionsseite | fertig | #20, #21 |
+| – | „In privaten Kalender“ mit Auswahl Google, Apple, Datei | fertig | #PRNUM |
 
 **Ergänzungen und Abweichungen**
 
@@ -646,6 +647,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | Push | Erinnerungen auch vor zugesagten Terminen mit Uhrzeit (gleiche Einstellungen wie bei Jobs) | Idee aus Abschnitt 16 | ADR 0015 |
 | Datenschutz | Erledigte Einladungen (abgelaufen, zurückgezogen, angenommen) werden nach 30 Tagen gelöscht | Datensparsamkeit (Abschnitt 11) | ADR 0015 |
 | Sicherheit | Betreiber-Konten werden nicht eingeladen, treten keiner AG bei und werden nicht Owner | Das Konto mit Vollzugriff soll nicht im App-Alltag laufen | ADR 0017 |
+| Kalender | „In privaten Kalender“ ersetzt die .ics-Knöpfe; der Google-Link enthält keine Namen von Mitgliedern, die Datei weiterhin die Crew eines Jobs | Direkter Weg in den eigenen Kalender, weniger Daten bei Google | ADR 0020 |
 | Kalender | Jobs ersetzen den Eintrag der Produktion an ihren Tagen und bleiben einzeln sichtbar | Mehrere Balken wirkten wie doppelte Termine | ADR 0019 |
 | Anfragen | Technik-Auswahl je AG, gepflegt von Owner, Admins und Lehrkräften; Anfragen speichern den Text statt einer Verknüpfung | Jede AG hat andere Technik; alte Anfragen bleiben beim Umbenennen und Löschen unverändert | ADR 0018 |
 | Google | Kein Drive-Anhang am Google-Termin; der Termin verlinkt in die App | Dateien liegen privat im Drive der AG – Abonnenten könnten Anhänge nicht öffnen | ADR 0015 |

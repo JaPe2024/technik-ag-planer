@@ -9,7 +9,7 @@ Planungs-App für Technik-AGs an Schulen: Produktionen, Jobs und Crew, Kalender,
 - **Konten nur auf Einladung**, Anmeldung mit Zwei-Faktor (Authenticator-App), mehrere AGs je Konto, Rollen Owner, Admin, Lehrkraft und Schüler/in
 - **Produktionen** mit Jobs, Crew (anfragen, einteilen, Konfliktwarnung), To-dos, Aufsicht, Kopieren und „Kürzlich gelöscht“
 - **Dashboard „Was steht an?“** mit nächster Produktion und „Meine Jobs“
-- **Kalender** (Monat, Woche, Agenda), Termine und Terminserien, Stundenraster, „Nicht verfügbar“, Export als `.ics`
+- **Kalender** (Monat, Woche, Agenda), Termine und Terminserien, Stundenraster, „Nicht verfügbar“, Übernahme in den privaten Kalender (Google, Apple, `.ics`)
 - **Board** als Chat der AG mit Systemmeldungen, Chats je Produktion, Moderation und Zähler für ungelesene Nachrichten
 - **Material** mit Kategorien, Bestand, Links, Defektmeldungen und Materialsätzen; Planung je Produktion mit Konfliktwarnung und Packliste zum Abhaken
 - **Technik anfragen** über einen öffentlichen Link ohne Konto; Anfragen erscheinen in der Produktionsliste und werden in einer geteilten Ansicht zur Produktion

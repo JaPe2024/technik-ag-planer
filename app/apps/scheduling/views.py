@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.cache import patch_vary_headers
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.text import slugify
 from django.views.decorators.http import require_POST
@@ -422,12 +423,16 @@ def periods(request):
     )
 
 
-# ---------- ICS-Export ----------
+# ---------- Privater Kalender: Auswahl, Datei und Google-Link ----------
 
 
-def _ics_response(request, name, events):
-    response = HttpResponse(ics.build_calendar(events), content_type="text/calendar; charset=utf-8")
-    response["Content-Disposition"] = f'attachment; filename="{slugify(name) or "termin"}.ics"'
+def _ics_response(request, name, event):
+    response = HttpResponse(
+        ics.build_calendar([event]), content_type="text/calendar; charset=utf-8"
+    )
+    # „oeffnen“: Apple-Geräte zeigen direkt den Dialog zum Hinzufügen statt eines Downloads
+    disposition = "inline" if request.GET.get("oeffnen") else "attachment"
+    response["Content-Disposition"] = f'{disposition}; filename="{slugify(name) or "termin"}.ics"'
     return response
 
 
@@ -435,8 +440,41 @@ def _uid(request, kind, pk):
     return f"{kind}-{pk}@{request.get_host().split(':')[0]}"
 
 
-@org_required
-def ics_production(request, pk):
+def _prefers_apple(request):
+    """iPadOS meldet sich als Mac, deshalb zählt auch „Macintosh“."""
+    agent = request.headers.get("User-Agent", "")
+    return any(name in agent for name in ("iPhone", "iPad", "Macintosh"))
+
+
+def _private_calendar(request, file_url_name, pk, event):
+    file_url = reverse(file_url_name, args=[pk])
+    google = {
+        "label": "Google Kalender",
+        "hint": "Öffnet den Termin bei Google zum Speichern",
+        "href": ics.google_url(event),
+        "external": True,
+    }
+    apple = {
+        "label": "Apple Kalender",
+        "hint": "Für iPhone, iPad und Mac",
+        "href": f"{file_url}?oeffnen=1",
+        "external": False,
+    }
+    response = render(
+        request,
+        "scheduling/private_calendar.html",
+        {
+            **CALENDAR,
+            "event": event,
+            "options": [apple, google] if _prefers_apple(request) else [google, apple],
+            "file_url": file_url,
+        },
+    )
+    patch_vary_headers(response, ["User-Agent"])
+    return response
+
+
+def _production_event(request, pk):
     from apps.productions.models import Production
 
     p = get_object_or_404(Production.objects.for_org(request.organization), pk=pk)
@@ -444,7 +482,7 @@ def ics_production(request, pk):
     lines = [
         f"{j.date:%d.%m.} {j.start_time:%H:%M}–{j.end_time:%H:%M} {j.name}" for j in p.jobs.all()
     ]
-    event = ics.IcsEvent(
+    return p.name, ics.IcsEvent(
         uid=_uid(request, "production", p.pk),
         summary=p.name,
         start=start,
@@ -453,11 +491,9 @@ def ics_production(request, pk):
         description="\n".join([f"Status: {p.status}", *lines, p.notes]).strip(),
         url=request.build_absolute_uri(reverse("productions:detail", args=[p.pk])),
     )
-    return _ics_response(request, p.name, [event])
 
 
-@org_required
-def ics_job(request, pk):
+def _job_event(request, pk):
     from apps.productions.models import Job
 
     j = get_object_or_404(
@@ -467,33 +503,25 @@ def ics_job(request, pk):
         pk=pk,
     )
     crew = ", ".join(a.person for a in j.crew.select_related("membership__user"))
-    event = ics.IcsEvent(
+    return f"{j.production}-{j.name}", ics.IcsEvent(
         uid=_uid(request, "job", j.pk),
         summary=f"{j.production} – {j.name}",
         start=j.start_datetime,
         end=j.end_datetime,
         location=j.production.location_name or j.production.address,
-        description="\n".join(
-            x
-            for x in [
-                f"Treffpunkt: {j.meeting_point}" if j.meeting_point else "",
-                f"Crew: {crew}" if crew else "",
-            ]
-            if x
-        ),
+        description=f"Treffpunkt: {j.meeting_point}" if j.meeting_point else "",
+        internal=f"Crew: {crew}" if crew else "",
         url=request.build_absolute_uri(reverse("productions:detail", args=[j.production_id])),
     )
-    return _ics_response(request, f"{j.production}-{j.name}", [event])
 
 
-@org_required
-def ics_event(request, pk):
+def _event_event(request, pk):
     e = _event(request, pk)
     if e.all_day:
         start, end = ics.all_day(e.date, e.date)
     else:
         start, end = e.start_datetime, e.end_datetime
-    event = ics.IcsEvent(
+    return e.title, ics.IcsEvent(
         uid=_uid(request, "event", e.pk),
         summary=e.title + (" (abgesagt)" if e.cancelled else ""),
         start=start,
@@ -502,21 +530,62 @@ def ics_event(request, pk):
         description=e.notes,
         url=request.build_absolute_uri(reverse("scheduling:event_detail", args=[e.pk])),
     )
-    return _ics_response(request, e.title, [event])
 
 
-@org_required
-def ics_unavailability(request, pk):
+def _unavailability_event(request, pk):
     u = _own_unavailability(request, pk)
     if u.all_day:
         start, end = ics.all_day(u.start_date, u.end_date)
     else:
         start, end = u.start_datetime, u.end_datetime
-    event = ics.IcsEvent(
+    return "nicht-verfuegbar", ics.IcsEvent(
         uid=_uid(request, "unavailable", u.pk),
         summary="Nicht verfügbar",
         start=start,
         end=end,
         description=u.note,
     )
-    return _ics_response(request, "nicht-verfuegbar", [event])
+
+
+@org_required
+def ics_production(request, pk):
+    return _ics_response(request, *_production_event(request, pk))
+
+
+@org_required
+def ics_job(request, pk):
+    return _ics_response(request, *_job_event(request, pk))
+
+
+@org_required
+def ics_event(request, pk):
+    return _ics_response(request, *_event_event(request, pk))
+
+
+@org_required
+def ics_unavailability(request, pk):
+    return _ics_response(request, *_unavailability_event(request, pk))
+
+
+@org_required
+def private_calendar_production(request, pk):
+    _name, event = _production_event(request, pk)
+    return _private_calendar(request, "scheduling:ics_production", pk, event)
+
+
+@org_required
+def private_calendar_job(request, pk):
+    _name, event = _job_event(request, pk)
+    return _private_calendar(request, "scheduling:ics_job", pk, event)
+
+
+@org_required
+def private_calendar_event(request, pk):
+    _name, event = _event_event(request, pk)
+    return _private_calendar(request, "scheduling:ics_event", pk, event)
+
+
+@org_required
+def private_calendar_unavailability(request, pk):
+    _name, event = _unavailability_event(request, pk)
+    return _private_calendar(request, "scheduling:ics_unavailability", pk, event)
