@@ -1069,10 +1069,15 @@ a.list__item:hover,
   cursor: pointer;
 }
 
-.segmented--choice input {
+/* Stärker als die allgemeine Regel für Felder, die Eingaben auf volle Breite setzt */
+.segmented--choice input,
+.field .segmented--choice input {
   position: absolute;
   width: 1px;
+  min-height: 0;
   height: 1px;
+  padding: 0;
+  border: 0;
   opacity: 0;
 }
 
@@ -1810,14 +1815,29 @@ a.icon-button {
   color: var(--color-text-muted);
 }
 
+/* Fest am unteren Bildschirmrand, über der Handy-Leiste bzw. über der Tastatur */
 .chat-input {
-  position: sticky;
+  position: fixed;
+  right: 0;
   bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom));
+  left: 0;
+  z-index: 15;
   display: flex;
   align-items: flex-end;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
+  padding: var(--space-2) var(--space-4);
   background: var(--color-bg);
+  border-top: 1px solid var(--color-line);
+}
+
+/* Offene Tastatur: Der Abstand kommt aus der sichtbaren Bildschirmhöhe (app.js) */
+.chat-input--keyboard {
+  bottom: var(--keyboard-height, 0);
+}
+
+/* Platz, damit das feste Eingabefeld keine Nachricht verdeckt */
+.board {
+  padding-bottom: var(--chat-input-height, 64px);
 }
 
 .chat-input textarea {
@@ -1844,6 +1864,12 @@ a.icon-button {
 @media (min-width: 900px) and (orientation: landscape), (min-width: 1200px) {
   .chat-input {
     bottom: 0;
+    left: var(--sidebar-width);
+    /* Bündig mit der mittig begrenzten Inhaltsspalte */
+    padding-inline: max(
+      var(--space-4),
+      calc((100vw - var(--sidebar-width) - var(--content-max)) / 2 + var(--space-4))
+    );
   }
 }
 

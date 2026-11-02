@@ -298,6 +298,27 @@ document.addEventListener("change", (event) => {
   });
   input.addEventListener("input", autosize);
 
+  // Das Eingabefeld ist fest positioniert: Platz dafür freihalten, auch wenn es wächst
+  const root = document.documentElement;
+  new ResizeObserver(() => {
+    root.style.setProperty("--chat-input-height", `${form.offsetHeight}px`);
+  }).observe(form);
+
+  // Offene Tastatur: Viele Browser verkleinern nur den sichtbaren Bereich
+  const viewport = window.visualViewport;
+  if (viewport) {
+    const placeAboveKeyboard = () => {
+      const keyboard = window.innerHeight - viewport.height - viewport.offsetTop;
+      const open = keyboard > 80 && document.activeElement === input;
+      form.classList.toggle("chat-input--keyboard", open);
+      root.style.setProperty("--keyboard-height", `${Math.max(0, Math.round(keyboard))}px`);
+      if (open) scrollToEnd();
+    };
+    viewport.addEventListener("resize", placeAboveKeyboard);
+    viewport.addEventListener("scroll", placeAboveKeyboard);
+    input.addEventListener("blur", placeAboveKeyboard);
+  }
+
   window.setInterval(() => {
     if (document.visibilityState === "visible") poll();
   }, POLL_MS);
