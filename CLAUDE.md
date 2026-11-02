@@ -2,7 +2,7 @@
 
 Spezifikation: `docs/feature-liste.md` (nicht hier kopieren). Ablauf und Meilensteine: Abschnitt 15, Umsetzungsstand und Entscheidungen: Abschnitt 16 (nach jedem Meilenstein fortschreiben).
 
-**Stand: Alle 12 Meilensteine umgesetzt – Wartung und Ideen aus Abschnitt 16 („Vor dem Start“, „Ideen für später“).** Weiter mit Branch, Plan, PR wie bisher; neue Entscheidungen als ADR ab 0018.
+**Stand: Alle 12 Meilensteine umgesetzt – Wartung und Ideen aus Abschnitt 16 („Vor dem Start“, „Ideen für später“).** Weiter mit Branch, Plan, PR wie bisher; neue Entscheidungen als ADR ab 0019.
 
 ## Regeln
 
@@ -49,7 +49,7 @@ Spezifikation: `docs/feature-liste.md` (nicht hier kopieren). Ablauf und Meilens
 | `productions` | Produktionen (weich gelöscht: `objects` / `all_objects`), Jobs, Crew, To-dos, Kategorien, Status, Dashboard, Fähigkeiten, Einsatzübersicht | 0005, 0011 |
 | `scheduling` | Kalender, Termine und Serien, „Nicht verfügbar“, Stundenraster, ICS | 0006 |
 | `board` | Board, Produktions-Chats, Systemmeldungen (Signale), Lesestand | 0007 |
-| `inquiries` | Technik-Anfragen: öffentlicher Link, Formular, Spam-Schutz, geteilte Ansicht Anfrage/Produktion | 0009 |
+| `inquiries` | Technik-Anfragen: öffentlicher Link, Formular, Technik-Auswahl je AG, Spam-Schutz, geteilte Ansicht Anfrage/Produktion | 0009, 0018 |
 | `inventory` | Material, Material-Kategorien, Defekte, Materialsätze, Planung je Produktion (Spitzenbedarf), Packliste | 0008 |
 | `google_sync` | Google-Konto der AG (OAuth, Token verschlüsselt), Drive-Ablage (`Attachment`), Kalender-Übertragung (Gesamtvergleich), Anleitung `docs/installation/google-cloud.md` | 0012 |
 | `notifications` | Web Push (VAPID), Geräte, Benachrichtigungs-Einstellungen, Erinnerungen, Manifest und Service Worker (`/sw.js`), App-Icon (`scripts/app_icon.py`) | 0013 |

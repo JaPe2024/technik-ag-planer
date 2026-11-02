@@ -57,7 +57,7 @@ def test_submit_full_inquiry(anonymous, org, active_link):
             setup_from="16:00",
             teardown_until="21:00",
             location="Aula",
-            tech_needs=["mikrofone", "licht"],
+            tech_needs=["Mikrofone", "Licht"],
             tech_notes="Klavier abnehmen",
             schedule="Chor, dann Orchester",
             schedule_link="https://example.org/ablauf.pdf",
@@ -67,7 +67,7 @@ def test_submit_full_inquiry(anonymous, org, active_link):
     )
     inquiry = Inquiry.objects.get()
     assert inquiry.category == category
-    assert inquiry.tech_labels == ["Mikrofone", "Licht"]
+    assert inquiry.tech_needs == ["Mikrofone", "Licht"]
     assert inquiry.schedule_link == "https://example.org/ablauf.pdf"
 
 

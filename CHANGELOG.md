@@ -6,6 +6,10 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 
 ### Hinzugefügt
 
+**Technik-Anfragen**
+
+- Die Ankreuzliste „Welche Technik brauchen Sie?“ ist je AG einstellbar (Einstellungen → Technik-Auswahl, für Owner, Admins und Lehrkräfte)
+
 **Sicherheit**
 
 - Betreiber-Konten können nicht mehr eingeladen werden, keiner AG beitreten und nicht Owner werden

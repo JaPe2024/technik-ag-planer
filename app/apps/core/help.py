@@ -100,7 +100,8 @@ TOPICS = [
                 "Wie kommen Technik-Anfragen von Lehrkräften herein?",
                 "Über den öffentlichen Link „Technik anfragen“ (Einstellungen). Neue Anfragen "
                 "erscheinen oben in der Produktionsliste und lassen sich direkt zur Produktion "
-                "machen.",
+                "machen. Die Ankreuzliste im Formular pflegt ihr unter Einstellungen → "
+                "Technik-Auswahl.",
                 PLANNERS,
             ),
         ],

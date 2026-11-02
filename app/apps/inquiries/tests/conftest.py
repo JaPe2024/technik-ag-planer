@@ -35,6 +35,6 @@ def evening(org, make_inquiry):
         setup_from=time(17),
         teardown_until=time(22),
         location="Aula",
-        tech_needs=["mikrofone", "beamer"],
+        tech_needs=["Mikrofone", "Beamer und Leinwand"],
         contact_phone="0221 123456",
     )

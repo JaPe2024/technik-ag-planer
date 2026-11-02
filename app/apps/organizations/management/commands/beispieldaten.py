@@ -315,7 +315,7 @@ class Command(BaseCommand):
             setup_from=time(17),
             teardown_until=time(22),
             location="Aula",
-            tech_needs=["mikrofone", "beamer", "laptop"],
+            tech_needs=["Mikrofone", "Beamer und Leinwand", "Laptop anschließen"],
             tech_notes="Präsentation vom eigenen Laptop (HDMI?), zwei Redner",
             schedule="19:00 Begrüßung\n19:15 Vortrag Schulleitung\n20:00 Fragen",
             contact_name="Herr Beispiel (Hausmeister)",
@@ -337,7 +337,7 @@ class Command(BaseCommand):
             event_name="Vorlesewettbewerb",
             date=today - timedelta(days=10),
             location="Bibliothek",
-            tech_needs=["mikrofone"],
+            tech_needs=["Mikrofone"],
         )
         mark_done(done, Membership.objects.for_org(org).get(role=Role.TEACHER).user)
         return link

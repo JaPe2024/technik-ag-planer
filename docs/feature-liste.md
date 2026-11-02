@@ -126,6 +126,7 @@ Vorgesehen sind die Rollen Owner, Admin, Lehrkraft und Schüler/in. Owner und Ad
 | Einsatzübersicht aller Mitglieder sehen | ja | ja | ja | nur eigene |
 | Google-Konto, Stundenraster, Fähigkeiten und Status-Werte verwalten | ja | nein | nein | nein |
 | Technik-Anfragen sehen, übernehmen und als erledigt markieren | ja | ja | ja | nein |
+| Technik-Auswahl für Anfragen verwalten | ja | ja | ja | nein |
 | Termine anlegen | ja | ja | ja | nein |
 | Eigene „Nicht verfügbar“-Einträge | ja | ja | ja | ja |
 | Stunden in der Einsatzübersicht korrigieren | ja | ja | ja | nein |
@@ -261,7 +262,7 @@ Das Formular muss auch für Lehrkräfte ohne Technikkenntnisse einfach auszufül
 | Was | Name der Veranstaltung, Art | Name als Freitext; Art als Auswahl aus den Kategorien der AG; beides optional |
 | Wann | Datum, Beginn und Ende, Aufbau ab / Abbau bis | Datum Pflicht (Datumsauswahl), Zeiten optional |
 | Wo | Ort bzw. Raum | Freitext, optional |
-| Welche Technik | z. B. Mikrofone, Musik abspielen, Licht, Beamer und Leinwand, Laptop anschließen | einfache Ankreuzliste in Alltagssprache plus Freitext, optional |
+| Welche Technik | Startwerte: Mikrofone, Musik abspielen, Licht, Beamer und Leinwand, Laptop anschließen | einfache Ankreuzliste in Alltagssprache plus Freitext, optional; die Liste pflegen Owner, Admins und Lehrkräfte je AG in den Einstellungen |
 | Ablauf | Programm bzw. Ablauf der Veranstaltung | Freitext, Link oder PDF-Upload (Ablage im Google Drive der AG), optional |
 | Ansprechperson am Tag | Name, Telefonnummer | Freitext, optional |
 
@@ -374,6 +375,7 @@ Die Einstellungen sind in fünf Gruppen gegliedert; oben steht die eigene Rolle 
 | Team | Organisation verwalten | Ownership übertragen, verlassen oder auflösen |
 | Planung | Kategorien | Produktions-Kategorien verwalten und sortieren (Name, Farbe) |
 | Planung | Technik anfragen | Öffentlichen Anfrage-Link verwalten, Status „Link ist aktiv“ |
+| Planung | Technik-Auswahl | Ankreuzliste im Anfrage-Formular verwalten und sortieren |
 | Planung | Kürzlich gelöscht | Gelöschte Produktionen 7 Tage lang wiederherstellen |
 | Planung | Google-Konto | Google-Konto der AG für Drive und Kalender verbinden, Status anzeigen, trennen (nur Owner) |
 | Planung | Stundenraster | Unterrichtsstunden mit Beginn und Ende festlegen (nur Owner) |
@@ -580,6 +582,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | 12 | Abschluss | fertig | #14 |
 | – | Wartung 1: Termin-Erinnerungen, Einladungen aufräumen | fertig | #15 |
 | – | Betreiber-Konten von AGs trennen | fertig | #17 |
+| – | Technik-Auswahl im Anfrage-Formular je AG | fertig | #18 |
 
 **Ergänzungen und Abweichungen**
 
@@ -638,6 +641,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | Push | Erinnerungen auch vor zugesagten Terminen mit Uhrzeit (gleiche Einstellungen wie bei Jobs) | Idee aus Abschnitt 16 | ADR 0015 |
 | Datenschutz | Erledigte Einladungen (abgelaufen, zurückgezogen, angenommen) werden nach 30 Tagen gelöscht | Datensparsamkeit (Abschnitt 11) | ADR 0015 |
 | Sicherheit | Betreiber-Konten werden nicht eingeladen, treten keiner AG bei und werden nicht Owner | Das Konto mit Vollzugriff soll nicht im App-Alltag laufen | ADR 0017 |
+| Anfragen | Technik-Auswahl je AG, gepflegt von Owner, Admins und Lehrkräften; Anfragen speichern den Text statt einer Verknüpfung | Jede AG hat andere Technik; alte Anfragen bleiben beim Umbenennen und Löschen unverändert | ADR 0018 |
 | Google | Kein Drive-Anhang am Google-Termin; der Termin verlinkt in die App | Dateien liegen privat im Drive der AG – Abonnenten könnten Anhänge nicht öffnen | ADR 0015 |
 | Entwicklung | Beispielkonten `owner@example.org`, `lehrer@…`, `schueler@…` …, Passwort jeweils der Name vor dem @ (M6–M11 mit Login ohne @; seit M12 wieder E-Mail-Eingabe) | Schneller durchklicken (Entscheidung des Projektinhabers) | README |
 | Repository | Kein `CONTRIBUTING.md` und kein `SECURITY.md`: Die Zustimmung zur Lizenz steht in der Pull-Request-Vorlage, Sicherheitslücken werden privat über GitHub gemeldet | Entscheidung des Projektinhabers, weniger Dateien | Abschnitt 13 |

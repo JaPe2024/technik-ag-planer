@@ -5,7 +5,13 @@ from apps.google_sync.forms import clean_pdf
 from apps.productions.forms import DateInput, TimeInput
 from apps.productions.models import Category
 
-from .models import TECH_CHOICES, Inquiry
+from .models import Inquiry, TechOption
+
+
+class TechOptionForm(forms.ModelForm):
+    class Meta:
+        model = TechOption
+        fields = ["name"]
 
 
 class InquiryForm(forms.ModelForm):
@@ -13,7 +19,6 @@ class InquiryForm(forms.ModelForm):
 
     tech_needs = forms.MultipleChoiceField(
         label="Welche Technik brauchen Sie?",
-        choices=TECH_CHOICES,
         required=False,
         widget=forms.CheckboxSelectMultiple,
     )
@@ -75,6 +80,12 @@ class InquiryForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["category"].queryset = Category.objects.for_org(organization)
         self.fields["category"].empty_label = "Bitte wählen (optional)"
+        # Gespeichert wird der Text: Spätere Änderungen an der Liste lassen Anfragen unberührt
+        names = TechOption.objects.for_org(organization).values_list("name", flat=True)
+        if names:
+            self.fields["tech_needs"].choices = [(name, name) for name in names]
+        else:
+            del self.fields["tech_needs"]
         # PDF-Upload nur, wenn die AG ein Google-Konto verbunden hat (Ablage im Drive)
         if allow_pdf:
             max_mb = settings.GOOGLE_INQUIRY_PDF_MAX_MB

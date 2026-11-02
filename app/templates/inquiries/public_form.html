@@ -39,12 +39,14 @@
     </fieldset>
 
     <fieldset class="form">
-      <legend class="section-title">{{ form.tech_needs.label }}</legend>
-      <div class="checklist">
-        {% for option in form.tech_needs %}
-          <label class="checklist__item">{{ option.tag }} {{ option.choice_label }}</label>
-        {% endfor %}
-      </div>
+      <legend class="section-title">Welche Technik brauchen Sie?</legend>
+      {% if form.tech_needs %}
+        <div class="checklist">
+          {% for option in form.tech_needs %}
+            <label class="checklist__item">{{ option.tag }} {{ option.choice_label }}</label>
+          {% endfor %}
+        </div>
+      {% endif %}
       {% include "includes/field.html" with field=form.tech_notes %}
     </fieldset>
 

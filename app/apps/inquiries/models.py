@@ -5,19 +5,42 @@ from django.db import models
 
 from apps.organizations.models import OrganizationQuerySet, OrganizationScopedModel
 
-# Ankreuzliste im Anfrage-Formular – in Alltagssprache (Abschnitt 6)
-TECH_CHOICES = [
-    ("mikrofone", "Mikrofone"),
-    ("musik", "Musik abspielen"),
-    ("licht", "Licht"),
-    ("beamer", "Beamer und Leinwand"),
-    ("laptop", "Laptop anschließen"),
+# Startwerte der Ankreuzliste im Anfrage-Formular – in Alltagssprache (Abschnitt 6)
+DEFAULT_TECH_OPTIONS = [
+    "Mikrofone",
+    "Musik abspielen",
+    "Licht",
+    "Beamer und Leinwand",
+    "Laptop anschließen",
 ]
-TECH_LABELS = dict(TECH_CHOICES)
 
 
 def new_token():
     return secrets.token_urlsafe(16)
+
+
+class TechOption(OrganizationScopedModel):
+    """Eintrag der Ankreuzliste „Welche Technik brauchen Sie?“ einer AG."""
+
+    name = models.CharField("Bezeichnung", max_length=60)
+    position = models.PositiveIntegerField("Reihenfolge", default=0)
+
+    class Meta:
+        verbose_name = "Technik-Auswahl"
+        verbose_name_plural = "Technik-Auswahl"
+        ordering = ["position", "name"]
+
+    def __str__(self):
+        return self.name
+
+
+def ensure_defaults(organization):
+    """Legt die Startwerte der Technik-Auswahl für eine AG an (idempotent)."""
+    if not TechOption.objects.for_org(organization).exists():
+        TechOption.objects.bulk_create(
+            TechOption(organization=organization, name=name, position=i)
+            for i, name in enumerate(DEFAULT_TECH_OPTIONS)
+        )
 
 
 class InquiryLink(OrganizationScopedModel):
@@ -140,7 +163,3 @@ class Inquiry(OrganizationScopedModel):
     @property
     def is_done(self):
         return self.done_at is not None
-
-    @property
-    def tech_labels(self):
-        return [TECH_LABELS[key] for key in self.tech_needs if key in TECH_LABELS]

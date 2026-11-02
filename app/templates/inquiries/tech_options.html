@@ -1,0 +1,37 @@
+{% extends "settings/page.html" %}
+{% block page_title_text %}Technik-Auswahl{% endblock %}
+{% block page_title %}Technik-Auswahl{% endblock %}
+{% block page_content %}
+<div class="stack">
+  <p class="muted">Diese Punkte stehen im Anfrage-Formular unter „Welche Technik brauchen Sie?“ zum Ankreuzen. Ist die Liste leer, bleibt dort nur das Freitextfeld. Bereits eingegangene Anfragen ändern sich nicht.</p>
+  {% if items %}
+    <ul class="list">
+      {% for item in items %}
+        <li class="list__item">
+          <div class="list__main">
+            <a class="list__link list__title" href="{% url 'inquiries:tech_option_edit' item.pk %}">{{ item.name }}</a>
+          </div>
+          <div class="list__actions">
+            <form method="post" action="{% url 'inquiries:tech_option_move' item.pk %}">
+              {% csrf_token %}
+              <button type="submit" name="richtung" value="-1" class="icon-button" aria-label="Nach oben"{% if forloop.first %} disabled{% endif %}>↑</button>
+              <button type="submit" name="richtung" value="1" class="icon-button" aria-label="Nach unten"{% if forloop.last %} disabled{% endif %}>↓</button>
+            </form>
+            <form method="post" action="{% url 'inquiries:tech_option_delete' item.pk %}" data-confirm="„{{ item.name }}“ löschen?">
+              {% csrf_token %}<button type="submit" class="icon-button" aria-label="{{ item.name }} löschen">{% include "includes/icon.html" with name="close" %}</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <section class="card">
+    <h2 class="section-title">Neu</h2>
+    <form method="post" class="form" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <div><button type="submit" class="button button--primary">Anlegen</button></div>
+    </form>
+  </section>
+</div>
+{% endblock %}

@@ -33,7 +33,7 @@
         <dd><span>{{ inquiry.date|date:"l, j. F Y" }}{% if inquiry.start_time %}, {{ inquiry.start_time|time:"H:i" }}{% if inquiry.end_time %}–{{ inquiry.end_time|time:"H:i" }}{% endif %} Uhr{% endif %}{% if inquiry.setup_from %}<br>Aufbau ab {{ inquiry.setup_from|time:"H:i" }} Uhr{% endif %}{% if inquiry.teardown_until %}<br>Abbau bis {{ inquiry.teardown_until|time:"H:i" }} Uhr{% endif %}</span> <span class="muted">wird übernommen</span></dd>
       </div>
       {% include "inquiries/includes/copy_row.html" with label="Ort" value=inquiry.location %}
-      {% if inquiry.tech_labels %}{% include "inquiries/includes/copy_row.html" with label="Technik" value=inquiry.tech_labels|join:", " %}{% endif %}
+      {% if inquiry.tech_needs %}{% include "inquiries/includes/copy_row.html" with label="Technik" value=inquiry.tech_needs|join:", " %}{% endif %}
       {% include "inquiries/includes/copy_row.html" with label="Sonstiges zur Technik" value=inquiry.tech_notes %}
       {% include "inquiries/includes/copy_row.html" with label="Ablauf" value=inquiry.schedule %}
       {% include "inquiries/includes/copy_row.html" with label="Link zum Ablauf" value=inquiry.schedule_link href=inquiry.schedule_link %}

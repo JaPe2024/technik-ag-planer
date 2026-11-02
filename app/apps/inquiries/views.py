@@ -18,8 +18,8 @@ from apps.productions.forms import JobForm, JobFormSet, ProductionForm
 from apps.productions.models import Job, Production
 
 from . import services
-from .forms import InquiryForm, InquiryLinkForm
-from .models import Inquiry
+from .forms import InquiryForm, InquiryLinkForm, TechOptionForm
+from .models import Inquiry, TechOption
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +108,64 @@ def link_settings(request):
         return redirect("inquiries:settings")
     url = request.build_absolute_uri(reverse("inquiries:public", args=[link.token]))
     return render(request, "inquiries/settings.html", {**SETTINGS, "link": link, "url": url})
+
+
+# ---------- Einstellungen: Technik-Auswahl ----------
+
+
+def _tech_option(request, pk):
+    return get_object_or_404(TechOption.objects.for_org(request.organization), pk=pk)
+
+
+@permission_required_in_org(Perm.MANAGE_TECH_OPTIONS)
+def tech_options(request):
+    items = TechOption.objects.for_org(request.organization)
+    form = TechOptionForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        item = form.save(commit=False)
+        item.organization = request.organization
+        item.position = items.count()
+        item.save()
+        messages.success(request, f"„{item.name}“ angelegt.")
+        return redirect("inquiries:tech_options")
+    return render(
+        request, "inquiries/tech_options.html", {**SETTINGS, "items": items, "form": form}
+    )
+
+
+@permission_required_in_org(Perm.MANAGE_TECH_OPTIONS)
+def tech_option_edit(request, pk):
+    item = _tech_option(request, pk)
+    form = TechOptionForm(request.POST or None, instance=item)
+    back = reverse("inquiries:tech_options")
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Gespeichert.")
+        return redirect(back)
+    return render(
+        request,
+        "productions/settings_item_form.html",
+        {**SETTINGS, "form": form, "item": item, "back": back},
+    )
+
+
+@require_POST
+@permission_required_in_org(Perm.MANAGE_TECH_OPTIONS)
+def tech_option_delete(request, pk):
+    item = _tech_option(request, pk)
+    item.delete()
+    messages.success(request, f"„{item.name}“ gelöscht.")
+    return redirect("inquiries:tech_options")
+
+
+@require_POST
+@permission_required_in_org(Perm.MANAGE_TECH_OPTIONS)
+def tech_option_move(request, pk):
+    direction = -1 if request.POST.get("richtung") == "-1" else 1
+    production_services.move(
+        _tech_option(request, pk), direction, TechOption.objects.for_org(request.organization)
+    )
+    return redirect("inquiries:tech_options")
 
 
 # ---------- Anfragen bearbeiten ----------

@@ -57,6 +57,12 @@ GROUPS = [
                 perm=Perm.MANAGE_CATEGORIES_AND_INQUIRY_LINK,
             ),
             Entry(
+                "Technik-Auswahl",
+                "Ankreuzliste im Anfrage-Formular verwalten und sortieren",
+                "inquiries:tech_options",
+                perm=Perm.MANAGE_TECH_OPTIONS,
+            ),
+            Entry(
                 "Kürzlich gelöscht",
                 "Gelöschte Produktionen 7 Tage lang wiederherstellen",
                 "productions:trash",
