@@ -9,6 +9,7 @@ urlpatterns = [
     path("anfrage/<str:token>/danke/", views.public_thanks, name="public_thanks"),
     path("anfragen/<int:pk>/", views.inquiry_detail, name="detail"),
     path("anfragen/<int:pk>/erledigt/", views.inquiry_done, name="done"),
+    path("anfragen/<int:pk>/nachfrage/", views.inquiry_followup, name="followup"),
     path("anfragen/erledigt/", views.done_list, name="done_list"),
     path("einstellungen/technik-anfragen/", views.link_settings, name="settings"),
     path("einstellungen/technik-auswahl/", views.tech_options, name="tech_options"),

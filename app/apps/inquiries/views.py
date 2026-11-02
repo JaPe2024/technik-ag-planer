@@ -199,12 +199,8 @@ def inquiry_detail(request, pk):
                 )
                 inquiry.production = production
                 inquiry.save(update_fields=["production"])
-                messages.success(
-                    request,
-                    f"Produktion „{production.name}“ angelegt. "
-                    "Die Anfrage bleibt in der Liste, bis du sie als erledigt markierst.",
-                )
-                return redirect("productions:detail", pk=production.pk)
+                messages.success(request, f"Produktion „{production.name}“ angelegt.")
+                return redirect("inquiries:followup", pk=inquiry.pk)
         else:
             formset.is_valid()
     else:
@@ -228,6 +224,26 @@ def inquiry_detail(request, pk):
         request,
         "inquiries/detail.html",
         {**PRODUCTIONS, "inquiry": inquiry, "form": form, "formset": formset},
+    )
+
+
+@permission_required_in_org(Perm.HANDLE_INQUIRIES)
+def inquiry_followup(request, pk):
+    """Nach dem Anlegen der Produktion: Hat sich die Anfrage damit erledigt?"""
+    inquiry = _inquiry(request, pk)
+    production = inquiry.production
+    if production is None or production.deleted_at is not None:
+        return redirect("inquiries:detail", pk=pk)
+    if inquiry.is_done:
+        return redirect("productions:detail", pk=production.pk)
+    if request.method == "POST":
+        services.mark_done(inquiry, request.user)
+        messages.success(request, f"Anfrage „{inquiry.title}“ erledigt.")
+        return redirect("productions:detail", pk=production.pk)
+    return render(
+        request,
+        "inquiries/followup.html",
+        {**PRODUCTIONS, "inquiry": inquiry, "production": production},
     )
 
 

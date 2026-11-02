@@ -2,7 +2,7 @@ from django import forms
 from django.forms import inlineformset_factory
 
 from apps.organizations.models import Membership
-from apps.scheduling.forms import PeriodTimesMixin
+from apps.scheduling.forms import PeriodTimesMixin, SegmentedRadio
 
 from .models import (
     Category,
@@ -137,7 +137,7 @@ class CrewForm(forms.Form):
             (CrewAssignment.Status.CONFIRMED, "Direkt einteilen"),
         ],
         initial=CrewAssignment.Status.REQUESTED,
-        widget=forms.RadioSelect,
+        widget=SegmentedRadio,
     )
     ignore_conflicts = forms.BooleanField(required=False, widget=forms.HiddenInput)
 

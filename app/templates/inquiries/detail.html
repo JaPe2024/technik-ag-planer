@@ -8,7 +8,7 @@
   <p class="muted">Eingegangen am {{ inquiry.created_at|date:"d.m.Y, H:i" }} Uhr{% if inquiry.is_done %} · erledigt am {{ inquiry.done_at|date:"d.m.Y" }}{% endif %}</p>
   <div class="toolbar">
     <form method="post" action="{% url 'inquiries:done' inquiry.pk %}">
-      {% csrf_token %}<button type="submit" class="button button--secondary button--small">{% if inquiry.is_done %}Wieder öffnen{% else %}Erledigt{% endif %}</button>
+      {% csrf_token %}<button type="submit" class="button {% if inquiry.is_done %}button--secondary{% else %}button--primary{% endif %} button--small">{% if inquiry.is_done %}Wieder öffnen{% else %}Erledigt{% endif %}</button>
     </form>
     {% if inquiry.production_id %}<a class="button button--secondary button--small" href="{% url 'productions:detail' inquiry.production_id %}">Produktion „{{ inquiry.production.name }}“</a>{% endif %}
   </div>

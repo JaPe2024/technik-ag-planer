@@ -3,7 +3,7 @@
 Gemeinsame Quelle für die Kalenderansichten und später die Google-Kalender-Übertragung (M10).
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, time, timedelta
 
 from django.urls import reverse
@@ -27,6 +27,8 @@ class Entry:
     cancelled: bool = False
     location: str = ""
     detail: str = ""  # Zusatz für die Tagesliste, z. B. Zeitraum über mehrere Tage
+    production_id: int | None = None  # nur bei Jobs
+    production_name: str = ""  # nur bei Jobs
 
     @property
     def all_day(self):
@@ -109,6 +111,8 @@ def calendar_entries(organization, start: date, end: date, membership=None):
                 ics_url=reverse("scheduling:ics_job", args=[j.pk]),
                 suffix="(In Planung)" if p.status.is_planning else "",
                 location=j.meeting_point or p.location_name,
+                production_id=p.pk,
+                production_name=p.name,
             )
         )
 
@@ -159,6 +163,24 @@ def calendar_entries(organization, start: date, end: date, membership=None):
 
     entries.sort(key=lambda e: e.sort_key)
     return entries
+
+
+def without_covered_productions(items):
+    """Einträge eines Tages ohne den Produktions-Eintrag, wenn ihre Jobs schon dastehen."""
+    with_jobs = {e.production_id for e in items if e.kind == "job"}
+    return [e for e in items if not (e.kind == "production" and e.pk in with_jobs)]
+
+
+def month_bars(items):
+    """Einträge eines Tages fürs Monatsraster: ein Balken je Produktion, frühester Job zuerst."""
+    bars, seen = [], set()
+    for entry in without_covered_productions(items):
+        if entry.kind != "job":
+            bars.append(entry)
+        elif entry.production_id not in seen:
+            seen.add(entry.production_id)
+            bars.append(replace(entry, title=entry.production_name))
+    return bars
 
 
 def _absence_detail(u):

@@ -3,27 +3,28 @@
 {% block topbar_title %}Kalender{% endblock %}
 {% block content %}
 <div class="stack">
-  <header class="page-header page-header--actions">
-    <h1 class="page-title">{{ title }}</h1>
-    <div class="toolbar">
-      <a class="icon-button" href="{{ links.prev }}" aria-label="Zurück">‹</a>
-      <a class="button button--secondary button--small" href="{{ links.today }}">Heute</a>
-      <a class="icon-button" href="{{ links.next }}" aria-label="Weiter">›</a>
+  <header class="cal-head">
+    <div class="cal-head__row">
+      <h1 class="page-title">{{ title }}</h1>
       {% if org_perms.CREATE_EVENTS %}<a class="button button--primary button--small" href="{{ new_event_url }}" data-sheet-url>+ Termin</a>{% endif %}
     </div>
-  </header>
-
-  <div class="toolbar">
-    <nav class="segmented" aria-label="Ansicht">
+    <div class="cal-head__row">
+      <div class="cal-head__nav">
+        <a class="icon-button" href="{{ links.prev }}" aria-label="Zurück">‹</a>
+        <a class="button button--secondary button--small" href="{{ links.today }}">Heute</a>
+        <a class="icon-button" href="{{ links.next }}" aria-label="Weiter">›</a>
+      </div>
+      <nav class="segmented" aria-label="Filter">
+        <a href="{{ links.all }}"{% if not mine %} aria-current="page"{% endif %}>Alle</a>
+        <a href="{{ links.mine }}"{% if mine %} aria-current="page"{% endif %}>Meine</a>
+      </nav>
+    </div>
+    <nav class="segmented cal-head__views" aria-label="Ansicht">
       <a href="{{ links.month }}"{% if view == "monat" %} aria-current="page"{% endif %}>Monat</a>
       <a href="{{ links.week }}"{% if view == "woche" %} aria-current="page"{% endif %}>Woche</a>
       <a href="{{ links.agenda }}"{% if view == "agenda" %} aria-current="page"{% endif %}>Agenda</a>
     </nav>
-    <nav class="segmented" aria-label="Filter">
-      <a href="{{ links.all }}"{% if not mine %} aria-current="page"{% endif %}>Alle</a>
-      <a href="{{ links.mine }}"{% if mine %} aria-current="page"{% endif %}>Meine</a>
-    </nav>
-  </div>
+  </header>
 
   {% if view == "agenda" %}
     {% for day in agenda %}

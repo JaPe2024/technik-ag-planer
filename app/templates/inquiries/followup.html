@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Anfrage erledigt? – Technik-AG Planer{% endblock %}
+{% block topbar_title %}Anfrage{% endblock %}
+{% block content %}
+<section class="card stack">
+  <div>
+    <p class="eyebrow">Produktion „{{ production.name }}“ ist angelegt</p>
+    <h1 class="page-title">Hat sich die Anfrage damit erledigt?</h1>
+    <p class="muted">Anfrage „{{ inquiry.title }}“ von {{ inquiry.requester_name }}. Offene Anfragen bleiben oben in der Produktionsliste und im Zähler.</p>
+  </div>
+  <div class="toolbar">
+    <form method="post">
+      {% csrf_token %}<button type="submit" class="button button--primary">Ja, erledigt</button>
+    </form>
+    <a class="button button--secondary" href="{% url 'productions:detail' production.pk %}">Nein, offen lassen</a>
+  </div>
+</section>
+{% endblock %}

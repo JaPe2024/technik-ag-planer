@@ -6,7 +6,12 @@ from django.utils import timezone
 
 from apps.organizations.permissions import Role
 from apps.productions.models import CrewAssignment
-from apps.scheduling.calendar import calendar_entries, month_grid
+from apps.scheduling.calendar import (
+    calendar_entries,
+    month_bars,
+    month_grid,
+    without_covered_productions,
+)
 from apps.scheduling.models import Event, EventAttendee, Unavailability
 
 
@@ -76,7 +81,7 @@ def test_calendar_month_week_agenda(org, member_client, concert):
     detail = member_client.get(
         reverse("scheduling:calendar"), {"datum": day.isoformat(), "tag": day.isoformat()}
     )
-    assert len(detail.context["selected_entries"]) == 3  # Produktion + 2 Jobs
+    assert [e.kind for e in detail.context["selected_entries"]] == ["job", "job"]
     empty_day = day + timedelta(days=1)
     empty = member_client.get(
         reverse("scheduling:calendar"), {"tag": empty_day.isoformat(), "datum": day.isoformat()}
@@ -307,3 +312,88 @@ def test_new_menu_links_event_and_unavailability(planner_client, student_client)
     student = student_client.get(reverse("productions:dashboard")).content.decode()
     assert reverse("scheduling:unavailability_create") in student
     assert reverse("scheduling:event_create") not in student.split('id="sheet-new"', 1)[1]
+
+
+# ---------- Produktion nur einmal je Tag ----------
+
+
+def _cell(response, day):
+    cells = [d for week in response.context["grid"] for d in week]
+    return next(d for d in cells if d["date"] == day)
+
+
+def test_month_grid_shows_production_once_with_earliest_time(org, member_client, concert):
+    day = concert.start_date
+    response = member_client.get(
+        reverse("scheduling:calendar"), {"ansicht": "monat", "datum": day.isoformat()}
+    )
+
+    cell = _cell(response, day)
+    assert [e.title for e in cell["entries"]] == ["Schulkonzert"]
+    assert cell["entries"][0].start_time == concert.jobs.get(name="Aufbau").start_time
+    assert cell["overflow"] == 0
+
+
+@pytest.mark.parametrize("view", ["woche", "agenda"])
+def test_week_and_agenda_list_jobs_without_production_entry(org, member_client, concert, view):
+    day = concert.start_date
+    response = member_client.get(
+        reverse("scheduling:calendar"), {"ansicht": view, "datum": day.isoformat()}
+    )
+
+    if view == "woche":
+        items = _cell(response, day)["entries"]
+    else:
+        items = next(d for d in response.context["agenda"] if d["date"] == day)["all"]
+    assert [e.title for e in items] == ["Schulkonzert – Aufbau", "Schulkonzert – Show"]
+
+
+def test_multi_day_production_stays_on_days_without_job(org, make_production, make_job):
+    production = make_production(org, length=2)
+    start = production.start_date
+    make_job(production, "Aufbau")
+    entries = calendar_entries(org, start, start + timedelta(days=1))
+
+    on_job_day = [e for e in entries if e.on(start)]
+    next_day = [e for e in entries if e.on(start + timedelta(days=1))]
+
+    assert [e.kind for e in without_covered_productions(on_job_day)] == ["job"]
+    assert [e.kind for e in without_covered_productions(next_day)] == ["production"]
+    assert [e.title for e in month_bars(next_day)] == [production.name]
+
+
+def test_mine_filter_uses_own_earliest_job(
+    org, student, make_production, make_job, make_assignment
+):
+    production = make_production(org)
+    make_job(production, "Aufbau")
+    show = make_job(production, "Show", start=time(18), end=time(20))
+    make_assignment(show, student)
+    day = production.start_date
+
+    bars = month_bars(calendar_entries(org, day, day, student))
+
+    assert [(b.title, b.start_time) for b in bars] == [(production.name, time(18))]
+
+
+def test_overflow_counts_summarised_bars(org, member_client, concert):
+    day = concert.start_date
+    for i in range(3):
+        Event.objects.create(organization=org, title=f"Termin {i}", date=day)
+
+    response = member_client.get(
+        reverse("scheduling:calendar"), {"ansicht": "monat", "datum": day.isoformat()}
+    )
+
+    assert _cell(response, day)["overflow"] == 1  # 1 Produktion + 3 Termine, davon 3 sichtbar
+
+
+def test_crew_switch_keeps_real_radio_fields(org, planner_client, concert):
+    job = concert.jobs.get(name="Aufbau")
+
+    content = planner_client.get(reverse("productions:job_crew", args=[job.pk])).content.decode()
+
+    assert "segmented--choice" in content
+    assert content.count('type="radio" name="status"') == 2
+    requested = content.split('name="status" value="requested"', 1)[1].split(">", 1)[0]
+    assert "checked" in requested

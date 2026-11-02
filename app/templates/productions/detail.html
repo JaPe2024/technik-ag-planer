@@ -28,22 +28,27 @@
     </div>
   </header>
 
-  {% if production.location_name or production.address %}
-    <section class="card">
-      <h2 class="section-title">Ort</h2>
-      <p class="list__title">{{ production.location_name|default:production.address }}</p>
-      {% if production.location_name and production.address %}<p class="muted">{{ production.address }}</p>{% endif %}
-      {% if production.address %}
-        <a class="button button--secondary button--small" href="https://www.google.com/maps/dir/?api=1&amp;destination={{ production.address|urlencode }}" target="_blank" rel="noopener noreferrer">Navigation starten</a>
+  {% if production.location_name or production.address or production.notes %}
+    <dl class="card facts">
+      {% if production.location_name or production.address %}
+        <div class="facts__row">
+          <dt class="section-title">Ort</dt>
+          <dd>
+            {{ production.location_name|default:production.address }}
+            {% if production.location_name and production.address %}<span class="muted facts__line">{{ production.address }}</span>{% endif %}
+            {% if production.address %}
+              <a class="button button--secondary button--small facts__action" href="https://www.google.com/maps/dir/?api=1&amp;destination={{ production.address|urlencode }}" target="_blank" rel="noopener noreferrer">Navigation starten</a>
+            {% endif %}
+          </dd>
+        </div>
       {% endif %}
-    </section>
-  {% endif %}
-
-  {% if production.notes %}
-    <section class="card">
-      <h2 class="section-title">Notizen</h2>
-      <p class="prewrap">{{ production.notes }}</p>
-    </section>
+      {% if production.notes %}
+        <div class="facts__row">
+          <dt class="section-title">Notizen</dt>
+          <dd class="prewrap">{{ production.notes }}</dd>
+        </div>
+      {% endif %}
+    </dl>
   {% endif %}
 
   <section>

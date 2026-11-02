@@ -155,8 +155,8 @@ Der Kalender zeigt Produktionen, Jobs, Termine und Abwesenheiten der ganzen AG o
 - Filter: „Alle“ oder „Meine“
 - Buttons „Heute“ und „+ Termin“, Pfeile für vorherigen und nächsten Zeitraum
 - Monatsraster Mo–So, Tage außerhalb des Monats abgeblendet, heutiger Tag hervorgehoben
-- Einträge als farbige Balken je Tag (Farbe nach Kategorie), mehrtägige Produktionen über mehrere Tage
-- Einträge mit Uhrzeit davor (z. B. „14:00 AG-Treffen“), Jobs als „Produktion – Job“, Produktionen in Planung mit Zusatz „(In Planung)“; „Nicht verfügbar“-Einträge grau und gestrichelt umrandet („Nicht verfügbar: Name“)
+- Einträge als farbige Balken je Tag (Farbe nach Kategorie), mehrtägige Produktionen über mehrere Tage; im Monatsraster steht eine Produktion je Tag nur einmal, mit der frühesten Job-Uhrzeit
+- Einträge mit Uhrzeit davor (z. B. „14:00 AG-Treffen“), in Woche, Agenda und Tagesliste Jobs als „Produktion – Job“ ohne zusätzlichen Eintrag der Produktion an diesem Tag, Produktionen in Planung mit Zusatz „(In Planung)“; „Nicht verfügbar“-Einträge grau und gestrichelt umrandet („Nicht verfügbar: Name“)
 - Überlauf-Hinweis „+1“, wenn nicht alle Einträge in die Zelle passen
 - Tagesdetail unter dem Raster: ausgewählter Tag mit Liste der Einträge oder „Keine Termine an diesem Tag“
 - „+ Termin an diesem Tag“ legt direkt einen Termin am gewählten Datum an
@@ -275,6 +275,7 @@ Das Formular muss auch für Lehrkräfte ohne Technikkenntnisse einfach auszufül
 - Datum und Uhrzeiten werden automatisch in die Produktion übernommen; alle anderen Felder der Anfrage haben einen Kopieren-Button, die Felder der Produktion einen Einfügen-Button
 - Die E-Mail-Adresse ist anklickbar und öffnet das Mailprogramm; Rückmeldungen an die Lehrkraft laufen per Mail außerhalb der App
 - Es gibt kein Annehmen oder Ablehnen: Ein Button „Erledigt“ entfernt die Anfrage aus der Liste (archiviert), egal ob daraus eine Produktion wurde
+- Nach dem Anlegen einer Produktion aus der Anfrage fragt die App direkt, ob sich die Anfrage damit erledigt hat
 
 ## 7. Material
 
@@ -586,6 +587,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | – | Betreiber-Konten von AGs trennen | fertig | #17 |
 | – | Technik-Auswahl im Anfrage-Formular je AG | fertig | #18 |
 | – | Dashboard-Kachel und Navigations-Zähler für offene Technik-Anfragen | fertig | #19 |
+| – | Oberfläche: Nachfrage bei Anfragen, Kalender, Board auf dem Handy, Crew-Schalter, Produktionsseite | fertig | #20 |
 
 **Ergänzungen und Abweichungen**
 
@@ -644,6 +646,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | Push | Erinnerungen auch vor zugesagten Terminen mit Uhrzeit (gleiche Einstellungen wie bei Jobs) | Idee aus Abschnitt 16 | ADR 0015 |
 | Datenschutz | Erledigte Einladungen (abgelaufen, zurückgezogen, angenommen) werden nach 30 Tagen gelöscht | Datensparsamkeit (Abschnitt 11) | ADR 0015 |
 | Sicherheit | Betreiber-Konten werden nicht eingeladen, treten keiner AG bei und werden nicht Owner | Das Konto mit Vollzugriff soll nicht im App-Alltag laufen | ADR 0017 |
+| Kalender | Eine Produktion erscheint je Tag nur einmal; Jobs ersetzen den Ganztags-Eintrag an ihren Tagen | Mehrere Balken wirkten wie doppelte Termine | ADR 0019 |
 | Anfragen | Technik-Auswahl je AG, gepflegt von Owner, Admins und Lehrkräften; Anfragen speichern den Text statt einer Verknüpfung | Jede AG hat andere Technik; alte Anfragen bleiben beim Umbenennen und Löschen unverändert | ADR 0018 |
 | Google | Kein Drive-Anhang am Google-Termin; der Termin verlinkt in die App | Dateien liegen privat im Drive der AG – Abonnenten könnten Anhänge nicht öffnen | ADR 0015 |
 | Entwicklung | Beispielkonten `owner@example.org`, `lehrer@…`, `schueler@…` …, Passwort jeweils der Name vor dem @ (M6–M11 mit Login ohne @; seit M12 wieder E-Mail-Eingabe) | Schneller durchklicken (Entscheidung des Projektinhabers) | README |

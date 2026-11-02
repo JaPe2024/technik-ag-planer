@@ -1013,7 +1013,8 @@ a.list__item:hover,
   background: var(--color-surface);
 }
 
-.segmented a {
+.segmented a,
+.segmented--choice label {
   padding: var(--space-1) var(--space-4);
   border-radius: var(--radius-full);
   color: var(--color-text-muted);
@@ -1021,9 +1022,31 @@ a.list__item:hover,
   text-decoration: none;
 }
 
-.segmented a[aria-current="page"] {
+.segmented a[aria-current="page"],
+.segmented--choice label:has(input:checked) {
   background: var(--color-primary);
   color: var(--color-on-primary);
+}
+
+.segmented--choice {
+  width: fit-content;
+}
+
+.segmented--choice label {
+  position: relative;
+  cursor: pointer;
+}
+
+.segmented--choice input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.segmented--choice label:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .disclosure > summary {
@@ -1069,9 +1092,43 @@ a.list__item:hover,
 
 .section-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-2);
   margin-bottom: var(--space-2);
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+}
+
+.facts__row {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: var(--space-2);
+  align-items: baseline;
+}
+
+.facts__row dt {
+  margin: 0;
+}
+
+.facts__row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.facts__line {
+  display: block;
+}
+
+.facts__action {
+  margin-top: var(--space-2);
 }
 
 .section-head .section-title {
@@ -1249,6 +1306,43 @@ a.list__item:hover,
 }
 
 /* ---------- Kalender ---------- */
+
+.cal-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cal-head__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cal-head__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.cal-head__views {
+  display: flex;
+  align-self: stretch;
+}
+
+.cal-head__views a {
+  flex: 1;
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  .cal-head__views {
+    display: inline-flex;
+    align-self: flex-start;
+  }
+}
 
 .cal {
   border: 1px solid var(--color-line);
@@ -1694,6 +1788,7 @@ a.icon-button {
 
 .chat-input textarea {
   flex: 1;
+  min-width: 0;
   min-height: 44px;
   max-height: 160px;
   padding: var(--space-2) var(--space-3);

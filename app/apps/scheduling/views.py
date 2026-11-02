@@ -16,7 +16,7 @@ from apps.organizations.decorators import org_required, permission_required_in_o
 from apps.organizations.permissions import Perm
 
 from . import ics, services
-from .calendar import calendar_entries, month_grid
+from .calendar import calendar_entries, month_bars, month_grid, without_covered_productions
 from .forms import AttendeeForm, EventEditScopeForm, EventForm, PeriodFormSet, UnavailabilityForm
 from .models import Event, EventAttendee, SchoolPeriod, Unavailability
 from .periods import DEFAULT_PERIODS
@@ -102,13 +102,18 @@ def calendar_view(request):
 
     limit = MAX_PER_CELL if view == "monat" else None
 
+    def entries_on(day):
+        return [e for e in entries if e.on(day)]
+
     def day_info(day):
-        items = [e for e in entries if e.on(day)]
+        on_day = entries_on(day)
+        items = without_covered_productions(on_day)
+        cell = month_bars(on_day) if view == "monat" else items
         return {
             "date": day,
             "url": link(datum=anchor.isoformat(), tag=day.isoformat()),
-            "entries": items[:limit],
-            "overflow": max(0, len(items) - limit) if limit else 0,
+            "entries": cell[:limit],
+            "overflow": max(0, len(cell) - limit) if limit else 0,
             "all": items,
             "in_month": view != "monat" or day.month == anchor.month,
             "is_today": day == today,
@@ -120,7 +125,7 @@ def calendar_view(request):
     if view == "agenda":
         day = start
         while day <= end:
-            items = [e for e in entries if e.on(day)]
+            items = without_covered_productions(entries_on(day))
             if items:
                 agenda.append({"date": day, "all": items, "is_today": day == today})
             day += timedelta(days=1)
@@ -140,7 +145,7 @@ def calendar_view(request):
             "grid": grid,
             "agenda": agenda,
             "selected": selected,
-            "selected_entries": [e for e in entries if e.on(selected)],
+            "selected_entries": without_covered_productions(entries_on(selected)),
             "weekdays": ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
             "google_subscribe_url": _google_subscribe_url(request.organization),
             "links": {

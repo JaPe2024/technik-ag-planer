@@ -11,6 +11,13 @@ from .periods import periods_for
 from .services import MAX_SERIES_DAYS
 
 
+class SegmentedRadio(forms.RadioSelect):
+    """Auswahl als Schalter im Stil von `.segmented`, weiterhin echte Radio-Felder."""
+
+    template_name = "productions/widgets/segmented.html"
+    option_template_name = "productions/widgets/segmented_option.html"
+
+
 class DateInput(forms.DateInput):
     input_type = "date"
 
@@ -139,7 +146,7 @@ class AttendeeForm(forms.Form):
             (EventAttendee.Status.CONFIRMED, "Direkt einteilen"),
         ],
         initial=EventAttendee.Status.REQUESTED,
-        widget=forms.RadioSelect,
+        widget=SegmentedRadio,
     )
     ignore_conflicts = forms.BooleanField(required=False, widget=forms.HiddenInput)
 

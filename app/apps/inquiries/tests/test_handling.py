@@ -96,7 +96,7 @@ def test_create_production_from_inquiry(org, planner_client, evening):
     response = planner_client.post(reverse("inquiries:detail", args=[evening.pk]), data)
 
     production = Production.objects.for_org(org).get()
-    assert response.url == reverse("productions:detail", args=[production.pk])
+    assert response.url == reverse("inquiries:followup", args=[evening.pk])
     assert [j.name for j in production.jobs.all()] == ["Aufbau", "Veranstaltung"]
     evening.refresh_from_db()
     assert evening.production == production and not evening.is_done
@@ -197,7 +197,13 @@ def test_handling_rights(org, owner, make_member, login, evening, role, expected
 
 @pytest.mark.parametrize(
     ("method", "url_name"),
-    [("get", "inquiries:detail"), ("post", "inquiries:detail"), ("post", "inquiries:done")],
+    [
+        ("get", "inquiries:detail"),
+        ("post", "inquiries:detail"),
+        ("post", "inquiries:done"),
+        ("get", "inquiries:followup"),
+        ("post", "inquiries:followup"),
+    ],
 )
 def test_foreign_inquiries_return_404(org, other_org, owner, login, make_inquiry, method, url_name):
     foreign = make_inquiry(other_org, "Fremde Anfrage")
@@ -291,3 +297,68 @@ def test_nav_badge_counts_only_open_inquiries_of_this_org(
 
     assert done.is_done
     assert "offene Technik-Anfragen" not in content
+
+
+# ---------- Nachfrage nach dem Anlegen ----------
+
+
+@pytest.fixture
+def linked(org, evening, make_production):
+    evening.production = make_production(org)
+    evening.save()
+    return evening
+
+
+def test_followup_asks_and_yes_marks_done(linked, planner_client):
+    url = reverse("inquiries:followup", args=[linked.pk])
+
+    assert "Hat sich die Anfrage damit erledigt?" in planner_client.get(url).content.decode()
+    response = planner_client.post(url)
+
+    assert response.url == reverse("productions:detail", args=[linked.production_id])
+    linked.refresh_from_db()
+    assert linked.is_done
+
+
+def test_followup_no_leaves_inquiry_open(linked, planner_client):
+    url = reverse("inquiries:followup", args=[linked.pk])
+    target = reverse("productions:detail", args=[linked.production_id])
+
+    assert f'href="{target}"' in planner_client.get(url).content.decode()
+    linked.refresh_from_db()
+    assert not linked.is_done
+
+
+def test_followup_without_production_goes_to_inquiry(evening, planner_client):
+    response = planner_client.get(reverse("inquiries:followup", args=[evening.pk]))
+
+    assert response.url == reverse("inquiries:detail", args=[evening.pk])
+
+
+def test_followup_of_deleted_production_goes_to_inquiry(linked, planner_client):
+    linked.production.deleted_at = timezone.now()
+    linked.production.save()
+
+    response = planner_client.post(reverse("inquiries:followup", args=[linked.pk]))
+
+    assert response.url == reverse("inquiries:detail", args=[linked.pk])
+    linked.refresh_from_db()
+    assert not linked.is_done
+
+
+def test_followup_when_already_done_goes_to_production(linked, planner_client, owner):
+    services.mark_done(linked, owner.user)
+
+    response = planner_client.get(reverse("inquiries:followup", args=[linked.pk]))
+
+    assert response.url == reverse("productions:detail", args=[linked.production_id])
+
+
+@pytest.mark.parametrize(
+    ("role", "expected"),
+    [(Role.OWNER, 200), (Role.ADMIN, 200), (Role.TEACHER, 200), (Role.STUDENT, 403)],
+)
+def test_followup_rights_per_role(org, owner, make_member, login, linked, role, expected):
+    client = login(_member(org, owner, make_member, role).user, org)
+
+    assert client.get(reverse("inquiries:followup", args=[linked.pk])).status_code == expected

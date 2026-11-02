@@ -11,6 +11,14 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 - Die Ankreuzliste „Welche Technik brauchen Sie?“ ist je AG einstellbar (Einstellungen → Technik-Auswahl, für Owner, Admins und Lehrkräfte)
 - Offene Technik-Anfragen als Dashboard-Kachel und als Zähler am Navigationspunkt „Produktionen“, für Owner, Admins und Lehrkräfte
 
+**Oberfläche**
+
+- Nach dem Anlegen einer Produktion aus einer Anfrage fragt die App, ob die Anfrage erledigt ist
+- Kalender: Produktion je Tag nur einmal, aufgeräumter Kopfbereich
+- Board: Das Eingabefeld macht die Seite auf dem Handy nicht mehr zu breit
+- Crew und Termine: Schalter „Anfragen | Direkt einteilen“ im einheitlichen Stil
+- Produktionsseite: Ort und Notizen kompakt in einer Karte, Kopf des Jobs-Bereichs bricht sauber um
+
 **Sicherheit**
 
 - Betreiber-Konten können nicht mehr eingeladen werden, keiner AG beitreten und nicht Owner werden
