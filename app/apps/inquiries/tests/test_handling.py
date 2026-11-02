@@ -232,3 +232,62 @@ def test_export_and_audit_include_inquiries(org, other_org, evening, make_inquir
     rows = json.loads(archive.read("inquiries_inquiry.json"))
     assert [r["event_name"] for r in rows] == ["Elternabend"]
     assert AuditEntry.objects.filter(object_type="Technik-Anfrage", organization=org).exists()
+
+
+# ---------- Dashboard-Kachel ----------
+
+
+@pytest.mark.parametrize(
+    ("role", "visible"),
+    [(Role.OWNER, True), (Role.ADMIN, True), (Role.TEACHER, True), (Role.STUDENT, False)],
+)
+def test_dashboard_tile_per_role(org, owner, make_member, login, make_inquiry, role, visible):
+    make_inquiry(org)
+    client = login(_member(org, owner, make_member, role).user, org)
+
+    response = client.get(reverse("productions:dashboard"))
+
+    assert ("Technik-Anfragen offen" in response.content.decode()) is visible
+    assert response.context["open_inquiry_count"] == (1 if visible else None)
+
+
+def test_dashboard_tile_counts_only_open_inquiries_of_this_org(
+    org, other_org, owner, login, make_inquiry
+):
+    make_inquiry(org)
+    make_inquiry(org, done_at=timezone.now())
+    make_inquiry(other_org)
+
+    response = login(owner.user, org).get(reverse("productions:dashboard"))
+
+    assert response.context["open_inquiry_count"] == 1
+
+
+# ---------- Zähler in der Navigation ----------
+
+
+@pytest.mark.parametrize(
+    ("role", "visible"),
+    [(Role.OWNER, True), (Role.ADMIN, True), (Role.TEACHER, True), (Role.STUDENT, False)],
+)
+def test_nav_badge_per_role(org, owner, make_member, login, make_inquiry, role, visible):
+    make_inquiry(org)
+    client = login(_member(org, owner, make_member, role).user, org)
+
+    content = client.get(reverse("scheduling:calendar")).content.decode()
+
+    assert ('aria-label="1 offene Technik-Anfragen"' in content) is visible
+    # Seitenleiste und Handy-Leiste
+    assert content.count("offene Technik-Anfragen") == (2 if visible else 0)
+
+
+def test_nav_badge_counts_only_open_inquiries_of_this_org(
+    org, other_org, owner, login, make_inquiry
+):
+    done = make_inquiry(org, done_at=timezone.now())
+    make_inquiry(other_org)
+
+    content = login(owner.user, org).get(reverse("scheduling:calendar")).content.decode()
+
+    assert done.is_done
+    assert "offene Technik-Anfragen" not in content

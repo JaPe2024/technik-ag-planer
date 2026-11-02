@@ -122,6 +122,9 @@ def dashboard(request):
     next_production = upcoming[0] if upcoming else None
     next_job = next_production.next_job() if next_production else None
     view = "jobs" if request.GET.get("ansicht") == "jobs" else "productions"
+    open_inquiry_count = None
+    if request.membership.has_perm(Perm.HANDLE_INQUIRIES):
+        open_inquiry_count = Inquiry.objects.for_org(request.organization).open().count()
 
     return render(
         request,
@@ -135,6 +138,7 @@ def dashboard(request):
             "my_assignments": my_assignments,
             "my_events": my_events,
             "open_request_count": len(open_requests),
+            "open_inquiry_count": open_inquiry_count,
             "view": view,
         },
     )

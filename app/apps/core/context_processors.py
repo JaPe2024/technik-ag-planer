@@ -1,7 +1,16 @@
 from apps.board.services import nav_unread_count
+from apps.inquiries.models import Inquiry
+from apps.organizations.permissions import Perm
 
 from . import navigation as sections
 from .design import THEME_COLOR
+
+
+def _open_inquiry_count(membership):
+    """Hinweis in der Navigation, nur für alle, die Technik-Anfragen sehen dürfen."""
+    if membership is None or not membership.has_perm(Perm.HANDLE_INQUIRIES):
+        return 0
+    return Inquiry.objects.for_org(membership.organization).open().count()
 
 
 def navigation(request):
@@ -22,6 +31,7 @@ def navigation(request):
         "nav_new_items": new_items,
         "nav_settings": sections.SETTINGS,
         "nav_unread_count": nav_unread_count(membership) if membership is not None else 0,
+        "nav_open_inquiry_count": _open_inquiry_count(membership),
         "current_membership": membership,
         "current_organization": getattr(request, "organization", None),
         "user_memberships": getattr(request, "memberships", []),

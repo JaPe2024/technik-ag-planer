@@ -9,6 +9,7 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 **Technik-Anfragen**
 
 - Die Ankreuzliste „Welche Technik brauchen Sie?“ ist je AG einstellbar (Einstellungen → Technik-Auswahl, für Owner, Admins und Lehrkräfte)
+- Offene Technik-Anfragen als Dashboard-Kachel und als Zähler am Navigationspunkt „Produktionen“, für Owner, Admins und Lehrkräfte
 
 **Sicherheit**
 

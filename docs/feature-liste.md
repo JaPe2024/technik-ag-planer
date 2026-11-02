@@ -140,6 +140,7 @@ Die Startseite zeigt auf einen Blick, was als Nächstes ansteht.
 - Karte „Nächste Produktion“: Name, Datum, Startzeit, nächster Job (z. B. „Aufbau“) und Treffpunkt (z. B. „Bühneneingang“)
 - Kachel „Kommende Produktionen“ mit Anzahl, führt zur Produktionsliste
 - Kachel „Crew-Anfragen offen“ mit Anzahl, führt zu den offenen Anfragen
+- Kachel „Technik-Anfragen offen“ mit Anzahl, führt zu den Anfragen in der Produktionsliste – nur für Owner, Admins und Lehrkräfte
 - Umschalter „Produktionen“ / „Meine Jobs“
 - Liste kommender Produktionen: Datumskachel (Tag und Monat), Name, Zeitraum, Anzahl Jobs, Ort, Status-Badge („Bestätigt“ grün, „In Planung“ orange)
 - „Meine Jobs“: nur die Jobs, in denen der Nutzer eingeteilt oder angefragt ist
@@ -269,6 +270,7 @@ Das Formular muss auch für Lehrkräfte ohne Technikkenntnisse einfach auszufül
 **Anfragen bearbeiten**
 
 - Owner, Admins und Lehrkräfte sehen eingegangene Anfragen oben in der Produktionsliste, mit Zähler (gemäß Rechte-Tabelle in Abschnitt 2)
+- Offene Anfragen zeigen diese Rollen zusätzlich als Zähler am Navigationspunkt „Produktionen“, bis sie erledigt sind
 - Beim Öffnen einer Anfrage teilt sich der Bildschirm: auf Tablet quer und Computer links die Anfrage, rechts das Formular „Neue Produktion“; auf dem Handy oben ein Umschalter „Anfrage | Produktion“ zum Hin- und Herwechseln
 - Datum und Uhrzeiten werden automatisch in die Produktion übernommen; alle anderen Felder der Anfrage haben einen Kopieren-Button, die Felder der Produktion einen Einfügen-Button
 - Die E-Mail-Adresse ist anklickbar und öffnet das Mailprogramm; Rückmeldungen an die Lehrkraft laufen per Mail außerhalb der App
@@ -583,6 +585,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | – | Wartung 1: Termin-Erinnerungen, Einladungen aufräumen | fertig | #15 |
 | – | Betreiber-Konten von AGs trennen | fertig | #17 |
 | – | Technik-Auswahl im Anfrage-Formular je AG | fertig | #18 |
+| – | Dashboard-Kachel und Navigations-Zähler für offene Technik-Anfragen | fertig | #19 |
 
 **Ergänzungen und Abweichungen**
 

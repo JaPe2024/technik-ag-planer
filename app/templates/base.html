@@ -26,6 +26,7 @@
             {% include "includes/icon.html" with name=item.icon %}
             {{ item.label }}
             {% if item.key == "board" and nav_unread_count %}<span class="badge nav-link__badge" aria-label="{{ nav_unread_count }} ungelesen">{{ nav_unread_count }}</span>{% endif %}
+            {% if item.key == "productions" and nav_open_inquiry_count %}<span class="badge nav-link__badge" aria-label="{{ nav_open_inquiry_count }} offene Technik-Anfragen">{{ nav_open_inquiry_count }}</span>{% endif %}
           </a>
         {% endfor %}
       </nav>
@@ -69,6 +70,7 @@
       {% for item in nav_mobile_right %}
         <a class="tab" href="{% url item.url_name %}"{% if item.key == active_section %} aria-current="page"{% endif %}>
           {% include "includes/icon.html" with name=item.icon %}{{ item.short_label }}
+          {% if item.key == "productions" and nav_open_inquiry_count %}<span class="badge tab__badge" aria-label="{{ nav_open_inquiry_count }} offene Technik-Anfragen">{{ nav_open_inquiry_count }}</span>{% endif %}
         </a>
       {% endfor %}
       <button type="button" class="tab" data-sheet-open="sheet-more"{% if active_section == "inventory" or active_section == "board" %} aria-current="page"{% endif %}>

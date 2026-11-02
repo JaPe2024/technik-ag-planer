@@ -29,6 +29,12 @@
         <span class="tile__number">{{ open_request_count }}</span>
         <span class="tile__label">Crew-Anfragen offen</span>
       </a>
+      {% if open_inquiry_count is not None %}
+        <a class="tile" href="{% url 'productions:list' %}#anfragen-titel">
+          <span class="tile__number">{{ open_inquiry_count }}</span>
+          <span class="tile__label">Technik-Anfragen offen</span>
+        </a>
+      {% endif %}
     </div>
 
     <nav class="segmented" aria-label="Ansicht">
