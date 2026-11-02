@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}QR-Etiketten{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/inventory-units.css' %}">{% endblock %}
+{% block content %}<article class="stack"><h1>QR-Etiketten</h1><p>Über die Druckfunktion des Browsers drucken. <a href="{% url 'inventory:list' %}">Zur Materialliste</a></p><div class="labels">{% for unit in units %}<div class="unit-label"><strong>{{ unit.material.name }}</strong><p>{{ unit.code }}</p><img width="160" height="160" src="{% url 'inventory:unit_qr' unit.pk %}" alt="QR-Code {{ unit.code }}"></div>{% empty %}<p>Noch keine aktiven Einzelgeräte.</p>{% endfor %}</div></article>{% endblock %}

@@ -123,6 +123,13 @@ class DefectReport(OrganizationScopedModel):
         REPAIRED = "repaired", "repariert"
 
     OPEN = (Status.DEFECT, Status.IN_REPAIR)
+    unit = models.ForeignKey(
+        "MaterialUnit", null=True, blank=True, on_delete=models.PROTECT, related_name="defects"
+    )
+    resolution = models.TextField(blank=True)
+    resolved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
 
     material = models.ForeignKey(
         Material, verbose_name="Material", on_delete=models.CASCADE, related_name="defects"
@@ -233,3 +240,100 @@ class PlannedMaterial(OrganizationScopedModel):
 
     def __str__(self):
         return f"{self.production} – {self.material} × {self.quantity}"
+
+
+class MaterialUnit(OrganizationScopedModel):
+    material = models.ForeignKey(Material, on_delete=models.PROTECT, related_name="units")
+    code = models.CharField(max_length=100, unique=True)
+    archived_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["code"]
+
+    def __str__(self):
+        return self.code
+
+
+class UnitIssue(OrganizationScopedModel):
+    unit = models.ForeignKey(MaterialUnit, on_delete=models.PROTECT, related_name="issues")
+    production = models.ForeignKey("productions.Production", on_delete=models.PROTECT)
+    issued_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+"
+    )
+    issued_at = models.DateTimeField(auto_now_add=True)
+    returned_at = models.DateTimeField(null=True, blank=True)
+    returned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+"
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["unit"], condition=Q(returned_at__isnull=True), name="unit_one_open_issue"
+            )
+        ]
+
+
+class UnitReservation(OrganizationScopedModel):
+    unit = models.ForeignKey(MaterialUnit, on_delete=models.PROTECT, related_name="reservations")
+    production = models.ForeignKey(
+        "productions.Production", on_delete=models.CASCADE, related_name="unit_reservations"
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    released_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["unit", "production"],
+                condition=Q(released_at__isnull=True),
+                name="unit_unique_reservation",
+            )
+        ]
+
+
+class ProductionTeardown(OrganizationScopedModel):
+    production = models.OneToOneField(
+        "productions.Production", on_delete=models.CASCADE, related_name="teardown"
+    )
+    started_at = models.DateTimeField(auto_now_add=True)
+    started_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    completed_at = models.DateTimeField(null=True, blank=True)
+    completed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+
+class TeardownException(OrganizationScopedModel):
+    class Reason(models.TextChoices):
+        MISSING = "missing", "Vermisst"
+        DAMAGED = "damaged", "Beschädigt"
+        OTHER = "other", "Sonstiges"
+
+    issue = models.OneToOneField(UnitIssue, on_delete=models.PROTECT, related_name="exception")
+    reason = models.CharField(max_length=10, choices=Reason.choices)
+    note = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+
+class MaterialCheckout(OrganizationScopedModel):
+    material = models.ForeignKey(Material, on_delete=models.PROTECT, related_name="checkouts")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    quantity = models.PositiveIntegerField(default=1)
+    taken_at = models.DateTimeField(auto_now_add=True)
+    returned_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=Q(quantity__gte=1), name="checkout_quantity_min_1")
+        ]

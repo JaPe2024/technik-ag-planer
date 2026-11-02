@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Material scannen – {{ production.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/inventory-units.css' %}">{% endblock %}
+{% block content %}
+<article class="stack">
+<header class="page-header"><h1>Material scannen – {{ production.name }}</h1><a href="{% url 'inventory:packing_list' production.pk %}">Zur Packliste</a> · <a href="{% url 'inventory:teardown_protocol' production.pk %}">Abbauprotokoll / Drucken</a></header>
+<section id="reservation-state" class="card stack"><h2>Einzelgeräte reservieren</h2><p>Die Reservierung umfasst die Produktionstage {{ production.start_date }} bis {{ production.end_date }}. Zuerst die benötigte Menge in der Materialplanung eintragen.</p>
+{% if not teardown.completed_at %}<form method="post" action="{% url 'inventory:reserve_unit' production.pk %}">{% csrf_token %}<select name="unit_id" aria-label="Einzelgerät" required>{% for unit in available_units %}<option value="{{ unit.pk }}">{{ unit.material.name }} · {{ unit.code }}</option>{% endfor %}</select><button>Reservieren</button></form>{% endif %}
+{% for reservation in reservations %}<div>{{ reservation.unit.material.name }} · {{ reservation.unit.code }}<form method="post" action="{% url 'inventory:cancel_reservation' reservation.pk %}">{% csrf_token %}<button>Reservierung aufheben</button></form></div>{% empty %}<p>Keine aktiven Reservierungen.</p>{% endfor %}</section>
+<section class="card stack"><h2>Ausgabe und Rückgabe</h2>
+<form method="post" id="scan-form">{% csrf_token %}
+<label>Vorgang <select name="mode"><option value="issue">Ausgabe</option><option value="return">Rückgabe</option></select></label>
+<label>Inventarcode <input name="code" required maxlength="500" autofocus autocomplete="off"></label><button class="button">Erfassen</button>
+</form>
+<button type="button" id="camera">Kamera starten</button><div id="preview" hidden></div><p id="scan-status" role="status" aria-live="polite"></p>
+<p>Für die Kamera ist HTTPS oder localhost erforderlich. Alternativ Inventarcode eingeben oder einen USB-Scanner verwenden.</p>
+</section>
+<section id="teardown-state" class="card stack"><h2>Abbaukontrolle</h2>
+{% if teardown.completed_at %}<p>Abgeschlossen am {{ teardown.completed_at }}. Spätere Rückgaben bleiben möglich.</p>{% elif teardown %}<p>Abbau aktiv seit {{ teardown.started_at }}.</p>{% else %}<form method="post" action="{% url 'inventory:teardown' production.pk %}">{% csrf_token %}<button name="operation" value="start">Abbau starten</button></form>{% endif %}
+{% for issue in issues %}<div><p>{{ issue.unit.code }} – {% if issue.returned_at %}zurückgegeben {{ issue.returned_at }}{% else %}ausgegeben {{ issue.issued_at }}{% endif %}</p>
+{% if issue.exception %}<p>Ausnahme: {{ issue.exception.get_reason_display }} · {{ issue.exception.note }}</p>{% elif not issue.returned_at and teardown and not teardown.completed_at %}
+<form method="post" action="{% url 'inventory:teardown' production.pk %}" class="stack">{% csrf_token %}<input type="hidden" name="operation" value="exception"><input type="hidden" name="issue_id" value="{{ issue.pk }}"><select name="reason" aria-label="Ausnahmegrund"><option value="missing">Vermisst</option><option value="damaged">Beschädigt</option><option value="other">Sonstiges</option></select><label>Bemerkung<textarea name="note" minlength="5" maxlength="2000" required></textarea></label><button>Ausnahme dokumentieren</button></form>{% endif %}</div>{% empty %}<p>Keine Ausgaben.</p>{% endfor %}
+{% if teardown and not teardown.completed_at %}<form method="post" action="{% url 'inventory:teardown' production.pk %}">{% csrf_token %}<button name="operation" value="complete">Abbau abschließen</button></form>{% endif %}
+</section></article>
+<script src="{% static 'vendor/html5-qrcode.min.js' %}" defer></script>
+<script src="{% static 'js/material-scanner.js' %}" defer></script>
+{% endblock %}

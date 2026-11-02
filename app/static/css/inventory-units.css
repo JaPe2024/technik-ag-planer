@@ -1,0 +1,9 @@
+﻿.labels { display: flex; flex-wrap: wrap; gap: 1rem; }
+.unit-label { display: inline-flex; flex-direction: column; align-items: center; padding: 1rem; border: 1px solid #777; break-inside: avoid; max-width: 22rem; overflow-wrap: anywhere; }
+#preview { max-width: 32rem; }
+@media print {
+  .sidebar, .topbar, .bottom-nav, .mobile-nav, .nav-mobile, form, button, a, .muted { display: none !important; }
+  .shell, main, .content { display: block !important; margin: 0 !important; padding: 0 !important; }
+  .unit-label, .card { break-inside: avoid; background: white; color: black; }
+  body { background: white; color: black; }
+}

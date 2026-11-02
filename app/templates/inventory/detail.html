@@ -7,7 +7,7 @@
     <p class="eyebrow"><a href="{% url 'inventory:list' %}">← Material</a>{% if material.category %} · <span class="dot" aria-hidden="true"></span> {{ material.category.name }}{% endif %}</p>
     <h1 class="page-title">{{ material.name }}</h1>
     <p class="muted">{% include "inventory/includes/stock.html" with m=material %}{% if material.is_archived %} · <span class="tag">archiviert</span>{% endif %}</p>
-    <div class="toolbar">
+    <div class="toolbar"><a class="button button--secondary" href="{% url 'inventory:units' material.pk %}">Einzelgeräte &amp; QR-Etiketten</a>
       {% if org_perms.REPORT_DEFECT and not material.is_archived %}
         <a class="button button--secondary button--small" href="{% url 'inventory:defect_report' material.pk %}" data-sheet-url>Defekt melden</a>
       {% endif %}
@@ -101,6 +101,13 @@
     {% else %}
       <p class="muted">In keiner kommenden Produktion eingeplant.</p>
     {% endif %}
+  </section>
+
+  <section class="card stack"><h2>Persönliche Ausleihe</h2>
+    <p>Einzelgeräte werden über die Materialausgabe einer Produktion gescannt.</p>
+    {% if not material.is_archived %}<form method="post" action="{% url 'inventory:checkout' material.pk %}">{% csrf_token %}<label>Menge<input type="number" name="quantity" min="1" max="10000" value="1" required></label><button>Ausleihen</button></form>{% endif %}
+    {% for loan in material.checkouts.all %}<div><p>{{ loan.quantity }} × · {{ loan.user|default:'Ehemaliges Mitglied' }} · {{ loan.taken_at }}{% if loan.returned_at %} · zurück {{ loan.returned_at }}{% endif %}</p>
+    {% if not loan.returned_at %}{% if loan.user_id == user.pk or org_perms.MANAGE_INVENTORY %}<form method="post" action="{% url 'inventory:checkin' loan.pk %}">{% csrf_token %}<button>Zurückgeben</button></form>{% endif %}{% endif %}</div>{% empty %}<p>Noch keine persönlichen Ausleihen.</p>{% endfor %}
   </section>
 </article>
 {% endblock %}

@@ -214,6 +214,8 @@ def defect_report(request, pk):
 @permission_required_in_org(Perm.MANAGE_INVENTORY)
 def defect_status(request, pk):
     defect = _defect(request, pk)
+    if defect.unit_id:
+        return redirect("inventory:units", pk=defect.material_id)
     status = request.POST.get("status")
     if status in DefectReport.Status.values and status != defect.status:
         services.set_defect_status(defect, status)

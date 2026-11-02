@@ -1,10 +1,25 @@
 from django.urls import path
 
-from . import views
+from . import unit_views, views
 
 app_name = "inventory"
 
 urlpatterns = [
+    path("material/etiketten/", unit_views.labels, name="labels"),
+    path("material/<int:pk>/ausleihen/", unit_views.checkout, name="checkout"),
+    path("ausleihen/<int:pk>/zurueck/", unit_views.checkin, name="checkin"),
+    path("geraet/<str:code>/", unit_views.device, name="device"),
+    path("geraete/<int:pk>/aktion/", unit_views.unit_action, name="unit_action"),
+    path("geraete/<int:pk>/defekt/", unit_views.unit_defect, name="unit_defect"),
+    path("geraete/defekte/<int:pk>/status/", unit_views.resolve_defect, name="unit_defect_status"),
+    path("produktionen/<int:pk>/reservieren/", unit_views.reserve, name="reserve_unit"),
+    path("reservierungen/<int:pk>/aufheben/", unit_views.cancel, name="cancel_reservation"),
+    path("produktionen/<int:pk>/abbau/", unit_views.teardown, name="teardown"),
+    path("produktionen/<int:pk>/abbau-protokoll/", unit_views.protocol, name="teardown_protocol"),
+    path("material/<int:pk>/geraete/", unit_views.units, name="units"),
+    path("material/<int:pk>/geraete/neu/", unit_views.create_unit, name="unit_create"),
+    path("geraete/<int:pk>/qr/", unit_views.qr, name="unit_qr"),
+    path("produktionen/<int:pk>/scan/", unit_views.scan, name="scan"),
     path("material/", views.material_list, name="list"),
     path("material/neu/", views.material_create, name="create"),
     path("material/<int:pk>/", views.material_detail, name="detail"),

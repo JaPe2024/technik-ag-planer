@@ -1,2 +1,2 @@
-{% comment %}Bestand mit Defekten. Parameter: m (mit annotate_defects){% endcomment %}
-{% if m.quantity is None %}Bestand: beliebig{% else %}Bestand: {{ m.quantity }}{% if m.defective %} · <span class="text-danger">{{ m.defective }} defekt</span> · {{ m.available }} verfügbar{% endif %}{% endif %}
+﻿{% comment %}Bestand mit Defekten und Ausleihen. Parameter: m (mit annotate_defects){% endcomment %}
+{% if m.quantity is None %}Bestand: beliebig{% else %}Bestand: {{ m.quantity }}{% if m.defective %} · <span class="text-danger">{{ m.defective }} defekt</span>{% endif %}{% if m.checked_out %} · {{ m.checked_out }} ausgeliehen{% endif %}{% if m.defective or m.checked_out %} · {{ m.available }} verfügbar{% endif %}{% endif %}
