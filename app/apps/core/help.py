@@ -100,10 +100,11 @@ TOPICS = [
             ),
             Question(
                 "Wie kommen Technik-Anfragen von Lehrkräften herein?",
-                "Über den öffentlichen Link „Technik anfragen“ (Einstellungen). Neue Anfragen "
-                "erscheinen oben in der Produktionsliste und lassen sich direkt zur Produktion "
+                "Über den öffentlichen Link „Technik anfragen“ (Einstellungen → AG anpassen). "
+                "Neue Anfragen erscheinen oben in der Produktionsliste und lassen sich direkt "
+                "zur Produktion "
                 "machen. Die Ankreuzliste im Formular pflegt ihr unter Einstellungen → "
-                "Technik-Auswahl.",
+                "AG anpassen → Technik-Auswahl.",
                 PLANNERS,
             ),
         ],
@@ -135,7 +136,8 @@ TOPICS = [
         [
             Question(
                 "Wie verbinde ich das Google-Konto der AG?",
-                "Einstellungen → Google-Konto → „Mit Google verbinden“ und mit einem normalen "
+                "Einstellungen → AG anpassen → Google-Konto → „Mit Google verbinden“ und mit einem "
+                "normalen "
                 "Google-Konto der AG (kein Schulkonto) anmelden. Beim Hinweis „nicht überprüft“ "
                 "auf „Erweitert → Weiter“ und bei Drive und Kalender das Häkchen setzen.",
                 {Role.OWNER},

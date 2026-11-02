@@ -97,6 +97,21 @@ def delete(attachment):
     return removed
 
 
+def trash_production_folder(production):
+    """Legt den Ordner einer endgültig gelöschten Produktion in den Papierkorb des Drive."""
+    connection = connection_for(production.organization)
+    key = f"production:{production.pk}"
+    if connection is None or key not in connection.folder_ids:
+        return
+    try:
+        api_for(production.organization).trash_file(connection.folder_ids[key])
+    except GoogleError as error:
+        logger.warning("Drive-Ordner %s nicht entfernt: %s", key, error)
+        return
+    connection.folder_ids = {k: v for k, v in connection.folder_ids.items() if k != key}
+    connection.save(update_fields=["folder_ids"])
+
+
 def delete_all(attachments):
     """Für Aufräum-Tasks: Drive-Dateien entfernen, bevor die Einträge endgültig verschwinden."""
     for attachment in list(attachments):

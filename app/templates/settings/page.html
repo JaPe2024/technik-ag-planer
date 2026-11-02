@@ -4,7 +4,7 @@
 {% block topbar_title %}Einstellungen{% endblock %}
 {% block content %}
   <header class="page-header">
-    <p class="eyebrow"><a href="{% url 'organizations:settings' %}">← Einstellungen</a></p>
+    <p class="eyebrow">{% if nav_in_customize %}<a href="{% url 'organizations:customize' %}">← AG anpassen</a>{% else %}<a href="{% url 'organizations:settings' %}">← Einstellungen</a>{% endif %}</p>
     <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
   </header>
   {% block page_content %}{% endblock %}

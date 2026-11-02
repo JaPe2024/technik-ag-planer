@@ -370,23 +370,23 @@ Diese Funktionen gelten für alle Mitglieder und begleiten Planung und Einteilun
 
 ## 10. Einstellungen
 
-Die Einstellungen sind in sechs Gruppen gegliedert; oben steht die eigene Rolle als Badge.
+Die Einstellungen sind in drei Gruppen gegliedert, jede Zeile ist als Ganzes anklickbar; alles, was je AG einstellbar ist, liegt gesammelt auf der Unterseite „AG anpassen“. Dem Owner zeigt die Seite oben einen Hinweis, solange kein Google-Konto verbunden ist oder der letzte Abgleich fehlgeschlagen ist; oben steht die eigene Rolle als Badge.
 
 | Gruppe | Eintrag | Funktion / Untertitel |
 | --- | --- | --- |
-| Team | Mitglieder | Liste mit Anzahl und Fähigkeiten; einladen und Rollen vergeben nur durch den Owner |
-| Team | Organisation verwalten | Ownership übertragen, verlassen oder auflösen |
-| Anpassung | Kategorien | Produktions-Kategorien verwalten und sortieren (Name, Farbe) |
-| Anpassung | Material-Kategorien | Kategorien für Material verwalten und sortieren (Name, Farbe) |
-| Anpassung | Status-Werte | Status für Produktionen mit Name und Farbe anlegen und sortieren (nur Owner) |
-| Anpassung | Fähigkeiten | Fähigkeiten zur Auswahl anlegen, umbenennen, sortieren, löschen (nur Owner) |
-| Anpassung | Technik-Auswahl | Ankreuzliste im Anfrage-Formular verwalten und sortieren |
-| Anpassung | Stundenraster | Unterrichtsstunden mit Beginn und Ende festlegen (nur Owner) |
-| Planung | Technik anfragen | Öffentlichen Anfrage-Link verwalten, Status „Link ist aktiv“ |
-| Planung | Kürzlich gelöscht | Gelöschte Produktionen 7 Tage lang wiederherstellen |
-| Planung | Google-Konto | Google-Konto der AG für Drive und Kalender verbinden, Status anzeigen, trennen (nur Owner) |
-| Planung | Schuljahreswechsel | Alle Jahrgangsstufen um eins erhöhen, Q2 wird „Extern“ (nur Owner) |
-| Datenschutz | Zwei-Faktor für alle Mitglieder | Pflicht ein/aus, Standard „Aus – freiwillig je Person“ |
+| AG | Mitglieder | Liste mit Anzahl und Fähigkeiten; einladen und Rollen vergeben nur durch den Owner |
+| AG | Organisation verwalten | Ownership übertragen, verlassen oder auflösen |
+| AG anpassen: Produktionen | Kategorien | Produktions-Kategorien verwalten und sortieren (Name, Farbe) |
+| AG anpassen: Material | Material-Kategorien | Kategorien für Material verwalten und sortieren (Name, Farbe) |
+| AG anpassen: Produktionen | Status-Werte | Status für Produktionen mit Name und Farbe anlegen und sortieren (nur Owner) |
+| AG anpassen: Produktionen | Fähigkeiten | Fähigkeiten zur Auswahl anlegen, umbenennen, sortieren, löschen (nur Owner) |
+| AG anpassen: Technik-Anfragen | Technik-Auswahl | Ankreuzliste im Anfrage-Formular verwalten und sortieren |
+| AG anpassen: Schule | Stundenraster | Unterrichtsstunden mit Beginn und Ende festlegen (nur Owner) |
+| AG anpassen: Technik-Anfragen | Technik anfragen | Öffentlichen Anfrage-Link verwalten, Status „Link ist aktiv“ |
+| AG | Kürzlich gelöscht | Gelöschte Produktionen 7 Tage lang wiederherstellen |
+| AG anpassen: Verbindungen und Sicherheit | Google-Konto | Google-Konto der AG für Drive und Kalender verbinden, Status anzeigen, trennen (nur Owner) |
+| AG anpassen: Schule | Schuljahreswechsel | Alle Jahrgangsstufen um eins erhöhen, Q2 wird „Extern“ (nur Owner) |
+| AG anpassen: Verbindungen und Sicherheit | Zwei-Faktor für alle Mitglieder | Pflicht ein/aus, Standard „Aus – freiwillig je Person“ |
 | Für mich | Benachrichtigungen | Push-Mitteilungen aktivieren und einstellen |
 | Für mich | Nicht verfügbar | Tage oder Zeiträume, an denen man nicht kann |
 | Für mich | Meine Fähigkeiten | Eigene Fähigkeiten aus der Liste des Owners auswählen |
@@ -587,7 +587,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | – | Wartung 1: Termin-Erinnerungen, Einladungen aufräumen | fertig | #15 |
 | – | Betreiber-Konten von AGs trennen | fertig | #17 |
 | – | Technik-Auswahl im Anfrage-Formular je AG | fertig | #18 |
-| – | Einstellungen: Gruppe „Anpassung“, ganze Zeile anklickbar, Google-Hinweis für den Owner | fertig | #25 |
+| – | Einstellungen: Unterseite „AG anpassen“, ganze Zeile anklickbar, Google-Hinweis für den Owner | fertig | #25, #26 |
 | – | Dashboard-Kachel und Navigations-Zähler für offene Technik-Anfragen | fertig | #19 |
 | – | Oberfläche: Nachfrage bei Anfragen, Kalender, Board auf dem Handy, Crew-Schalter, Produktionsseite | fertig | #20, #21 |
 | – | „In privaten Kalender“ mit Auswahl Google, Apple, Datei | fertig | #22 |
@@ -651,6 +651,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | Sicherheit | Betreiber-Konten werden nicht eingeladen, treten keiner AG bei und werden nicht Owner | Das Konto mit Vollzugriff soll nicht im App-Alltag laufen | ADR 0017 |
 | Kalender | „In privaten Kalender“ ersetzt die .ics-Knöpfe; der Google-Link enthält keine Namen von Mitgliedern, die Datei weiterhin die Crew eines Jobs | Direkter Weg in den eigenen Kalender, weniger Daten bei Google | ADR 0020 |
 | Kalender | Jobs ersetzen den Eintrag der Produktion an ihren Tagen und bleiben einzeln sichtbar | Mehrere Balken wirkten wie doppelte Termine | ADR 0019 |
+| Einstellungen | Unterseite „AG anpassen“ sammelt alle AG-Einstellungen; Fehler beim Google-Abgleich statt „verbunden“ anzeigen; Ordner endgültig gelöschter Produktionen in den Drive-Papierkorb | Übersicht und ehrlicher Status; Ordner können selbst abgelegte Dateien enthalten | ADR 0021 |
 | Anfragen | Technik-Auswahl je AG, gepflegt von Owner, Admins und Lehrkräften; Anfragen speichern den Text statt einer Verknüpfung | Jede AG hat andere Technik; alte Anfragen bleiben beim Umbenennen und Löschen unverändert | ADR 0018 |
 | Google | Kein Drive-Anhang am Google-Termin; der Termin verlinkt in die App | Dateien liegen privat im Drive der AG – Abonnenten könnten Anhänge nicht öffnen | ADR 0015 |
 | Entwicklung | Beispielkonten `owner@example.org`, `lehrer@…`, `schueler@…` …, Passwort jeweils der Name vor dem @ (M6–M11 mit Login ohne @; seit M12 wieder E-Mail-Eingabe) | Schneller durchklicken (Entscheidung des Projektinhabers) | README |

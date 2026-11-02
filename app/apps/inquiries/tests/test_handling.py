@@ -163,7 +163,7 @@ def test_link_settings_activate_renew_deactivate(org, owner, login):
 
 
 def test_settings_menu_links_inquiry_settings(org, owner, login):
-    content = login(owner.user, org).get(reverse("organizations:settings")).content.decode()
+    content = login(owner.user, org).get(reverse("organizations:customize")).content.decode()
     assert reverse("inquiries:settings") in content
 
 

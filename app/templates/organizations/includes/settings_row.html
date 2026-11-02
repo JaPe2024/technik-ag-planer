@@ -1,0 +1,11 @@
+{% comment %}Zeile der Einstellungen: der ganze Kasten ist der Link. Parameter: entry{% endcomment %}
+<li>
+  <a class="list__item list__link" href="{% url entry.url_name %}">
+    <span class="list__main">
+      <span class="list__title">{{ entry.label }}</span>
+      <span class="list__subtitle">{{ entry.subtitle }}</span>
+    </span>
+    {% if entry.url_name == "inquiries:settings" %}<span class="tag{% if inquiry_link_active %} tag--success{% endif %}">{% if inquiry_link_active %}Link ist aktiv{% else %}aus{% endif %}</span>{% endif %}
+    {% if entry.url_name == "google_sync:settings" %}{% if google_problem %}<span class="tag tag--danger">Verbindung prüfen</span>{% elif google_connected %}<span class="tag tag--success">verbunden</span>{% endif %}{% endif %}
+  </a>
+</li>

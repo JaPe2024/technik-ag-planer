@@ -53,6 +53,10 @@ class FakeGoogle:
         self._maybe_fail("delete_file")
         self.files.pop(file_id, None)
 
+    def trash_file(self, file_id):
+        self._maybe_fail("trash_file")
+        self.folders.pop(file_id, None)
+
     def path_of(self, file_id):
         """„Wurzel/Unterordner/…“ einer Datei – für Tests der Ordnerstruktur."""
         parts, parent = [], self.files[file_id]["parent"]

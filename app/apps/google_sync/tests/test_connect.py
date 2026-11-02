@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 
 from apps.google_sync import oauth
-from apps.google_sync.google_api import SCOPES
+from apps.google_sync.google_api import EXPIRED, SCOPES
 from apps.google_sync.models import GoogleConnection, SyncedEvent
 from apps.organizations.permissions import Role
 
@@ -115,13 +115,13 @@ def test_only_owner(org, make_member, login, google, role):
 
 
 def test_settings_menu_links_google(owner_client):
-    content = owner_client.get(reverse("organizations:settings")).content.decode()
+    content = owner_client.get(reverse("organizations:customize")).content.decode()
     assert reverse("google_sync:settings") in content
 
 
 # ---------- Hinweis in den Einstellungen ----------
 
-HINT = "Noch kein Google-Konto verbunden"
+HINT = "Kein Google-Konto verbunden"
 
 
 @pytest.fixture
@@ -153,3 +153,36 @@ def test_no_hint_without_google_project(org, owner, login, settings):
 @pytest.mark.parametrize("role", [Role.ADMIN, Role.TEACHER, Role.STUDENT])
 def test_only_owner_sees_hint(org, make_member, login, configured, role):
     assert HINT not in _settings_page(login(make_member(org, role).user, org))
+
+
+def test_failed_sync_shows_problem_to_owner_only(
+    org, owner, make_member, login, configured, connected
+):
+    connected.last_error = "Google ist gerade nicht erreichbar."
+    connected.save()
+
+    content = _settings_page(login(owner.user, org))
+    assert "Problem mit der Google-Verbindung: Google ist gerade nicht erreichbar." in content
+    customize = login(owner.user, org).get(reverse("organizations:customize")).content.decode()
+    assert "Verbindung prüfen" in customize
+    assert ">verbunden<" not in customize
+
+    student = make_member(org, Role.STUDENT)
+    assert "Problem mit der Google-Verbindung" not in _settings_page(login(student.user, org))
+
+
+def test_expired_connection_asks_owner_to_reconnect(org, owner, login, configured, connected):
+    connected.last_error = EXPIRED
+    connected.save()
+
+    content = _settings_page(login(owner.user, org))
+
+    assert "abgelaufen. Bitte neu verbinden." in content
+    assert "bitte den Owner fragen" not in content
+
+
+def test_successful_connection_shows_connected_tag(org, owner, login, configured, connected):
+    content = login(owner.user, org).get(reverse("organizations:customize")).content.decode()
+
+    assert "Verbindung prüfen" not in content
+    assert ">verbunden<" in content
