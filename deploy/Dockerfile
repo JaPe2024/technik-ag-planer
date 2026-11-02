@@ -55,4 +55,4 @@ USER app
 EXPOSE 8000
 ENTRYPOINT ["entrypoint.sh"]
 # Längere Zeitgrenze: Datei-Uploads gehen während der Anfrage weiter ins Google Drive
-CMD ["gunicorn", "config.wsgi", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "--access-logfile", "-"]
+CMD ["gunicorn", "config.wsgi", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "--access-logfile", "-", "--no-control-socket"]

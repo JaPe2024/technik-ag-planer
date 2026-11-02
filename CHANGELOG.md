@@ -14,10 +14,14 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 **Oberfläche**
 
 - Nach dem Anlegen einer Produktion aus einer Anfrage fragt die App, ob die Anfrage erledigt ist
-- Kalender: Produktion je Tag nur einmal, aufgeräumter Kopfbereich
+- Kalender: kein doppelter Eintrag mehr für Produktion und Jobs am selben Tag, aufgeräumter Kopfbereich
 - Board: Das Eingabefeld macht die Seite auf dem Handy nicht mehr zu breit
 - Crew und Termine: Schalter „Anfragen | Direkt einteilen“ im einheitlichen Stil
 - Produktionsseite: Ort und Notizen kompakt in einer Karte, Kopf des Jobs-Bereichs bricht sauber um
+
+**Betrieb**
+
+- Gunicorn startet ohne ungenutzten Steuerzugang, die Fehlermeldung beim Start entfällt
 
 **Sicherheit**
 
