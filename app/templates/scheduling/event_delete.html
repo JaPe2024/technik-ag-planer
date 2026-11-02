@@ -8,8 +8,11 @@
       {% csrf_token %}
       {% if event.series %}
         <div class="field">
-          <label class="field--checkbox"><input type="radio" name="scope" value="single" checked> Nur diesen Termin</label>
-          <label class="field--checkbox"><input type="radio" name="scope" value="following"> Diesen und alle folgenden der Serie</label>
+          <span class="field__label">Löschen für</span>
+          <div class="segmented segmented--choice" role="radiogroup" aria-label="Löschen für">
+            <label><input type="radio" name="scope" value="single" checked>Nur diesen Termin</label>
+            <label><input type="radio" name="scope" value="following">Diesen und alle folgenden</label>
+          </div>
         </div>
       {% endif %}
       <div class="form-actions">

@@ -210,18 +210,26 @@ document.addEventListener("change", (event) => {
   const form = board.querySelector("[data-board-form]");
   const input = form.querySelector("textarea");
   let lastId = Number(board.dataset.lastId) || 0;
-  let busy = false;
+  let polling = null;
 
-  const scrollToEnd = () => document.getElementById("ende")?.scrollIntoView({ block: "end" });
+  // Bis ganz unten: Das Eingabefeld klebt über dem Seitenende und darf nichts verdecken
+  const scrollToEnd = () =>
+    requestAnimationFrame(() => window.scrollTo(0, document.documentElement.scrollHeight));
 
   function autosize() {
     input.style.height = "auto";
     input.style.height = `${input.scrollHeight}px`;
   }
 
-  async function poll() {
-    if (busy) return;
-    busy = true;
+  function poll() {
+    // Läuft schon eine Abfrage, warten alle Aufrufer auf deren Ergebnis
+    polling ??= fetchNew().finally(() => {
+      polling = null;
+    });
+    return polling;
+  }
+
+  async function fetchNew() {
     try {
       const url = new URL(board.dataset.pollUrl, window.location.href);
       url.searchParams.set("nach", String(lastId));
@@ -241,16 +249,22 @@ document.addEventListener("change", (event) => {
       if (nearEnd) scrollToEnd();
     } catch {
       /* offline – nächster Versuch beim nächsten Intervall */
-    } finally {
-      busy = false;
     }
   }
 
+  // Tastatur offen lassen: Der Senden-Knopf darf dem Eingabefeld den Fokus nicht nehmen
+  const send = form.querySelector("[type=submit]");
+  send.addEventListener("mousedown", (event) => event.preventDefault());
+  send.addEventListener("touchend", (event) => {
+    event.preventDefault();
+    form.requestSubmit();
+  });
+
+  let sending = false;
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!input.value.trim()) return;
-    const button = form.querySelector("[type=submit]");
-    button.disabled = true;
+    if (sending || !input.value.trim()) return;
+    sending = true;
     try {
       const response = await fetch(form.action, {
         method: "POST",
@@ -260,6 +274,8 @@ document.addEventListener("change", (event) => {
       if (response.status === 204) {
         input.value = "";
         autosize();
+        // Eine laufende Abfrage kennt die neue Nachricht vielleicht noch nicht
+        await polling;
         await poll();
         scrollToEnd();
       } else if (response.status === 400) {
@@ -270,8 +286,7 @@ document.addEventListener("change", (event) => {
     } catch {
       form.submit();
     } finally {
-      button.disabled = false;
-      input.focus();
+      sending = false;
     }
   });
 

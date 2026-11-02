@@ -522,6 +522,7 @@ h3 {
 }
 
 .field--checkbox input {
+  flex: none;
   width: 22px;
   height: 22px;
   accent-color: var(--color-accent);
@@ -1051,10 +1052,20 @@ a.list__item:hover,
 
 .segmented--choice {
   width: fit-content;
+  max-width: 100%;
+}
+
+@media (max-width: 599px) {
+  .segmented--choice {
+    display: flex;
+    width: 100%;
+  }
 }
 
 .segmented--choice label {
   position: relative;
+  flex: 1 1 0;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -1303,6 +1314,8 @@ a.list__item:hover,
 
 .field input[type="date"],
 .field input[type="time"] {
+  min-width: 0;
+  max-width: 100%;
   color-scheme: dark;
 }
 
