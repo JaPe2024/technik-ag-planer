@@ -22,7 +22,7 @@ class Entry:
     end_time: time | None = None
     color: str = ""  # Palette-Schlüssel; leer = Akzent
     url: str = ""
-    ics_url: str = ""
+    calendar_url: str = ""  # Auswahl „In privaten Kalender“
     suffix: str = ""  # z. B. „(In Planung)“, „(abgesagt)“
     cancelled: bool = False
     location: str = ""
@@ -89,7 +89,7 @@ def calendar_entries(organization, start: date, end: date, membership=None):
                 end_date=p.end_date,
                 color=p.category.color if p.category else "grey",
                 url=reverse("productions:detail", args=[p.pk]),
-                ics_url=reverse("scheduling:ics_production", args=[p.pk]),
+                calendar_url=reverse("scheduling:private_calendar_production", args=[p.pk]),
                 suffix="(In Planung)" if p.status.is_planning else "",
                 location=p.location_name,
             )
@@ -107,7 +107,7 @@ def calendar_entries(organization, start: date, end: date, membership=None):
                 end_time=j.end_time,
                 color=p.category.color if p.category else "grey",
                 url=reverse("productions:detail", args=[p.pk]),
-                ics_url=reverse("scheduling:ics_job", args=[j.pk]),
+                calendar_url=reverse("scheduling:private_calendar_job", args=[j.pk]),
                 suffix="(In Planung)" if p.status.is_planning else "",
                 location=j.meeting_point or p.location_name,
                 production_id=p.pk,
@@ -128,7 +128,7 @@ def calendar_entries(organization, start: date, end: date, membership=None):
                 start_time=e.start_time,
                 end_time=e.end_time,
                 url=reverse("scheduling:event_detail", args=[e.pk]),
-                ics_url=reverse("scheduling:ics_event", args=[e.pk]),
+                calendar_url=reverse("scheduling:private_calendar_event", args=[e.pk]),
                 suffix="(abgesagt)" if e.cancelled else "",
                 cancelled=e.cancelled,
                 location=e.location,

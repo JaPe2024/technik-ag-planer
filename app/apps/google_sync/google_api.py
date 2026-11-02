@@ -148,6 +148,15 @@ class GoogleApi:
             if error.kind != "not_found":
                 raise
 
+    def trash_file(self, file_id):
+        """In den Papierkorb statt endgültig: Ein Ordner kann selbst abgelegte Dateien enthalten."""
+        drive = self._service("drive", "v3")
+        try:
+            self._call(drive.files().update(fileId=file_id, body={"trashed": True}))
+        except GoogleError as error:
+            if error.kind != "not_found":
+                raise
+
     # ---------- Kalender ----------
 
     def create_calendar(self, summary):

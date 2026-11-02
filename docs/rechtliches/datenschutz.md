@@ -32,6 +32,7 @@ Der Technik-AG Planer dient der Organisation von Technik-AGs an Schulen: Planung
 
 - **Hosting:** Die App und die Datenbank laufen auf einem eigenen Server [Standort, ggf. Anbieter des Servers/Rechenzentrums].
 - **Google (Google Ireland Limited):** Verbindet eine AG ein Google-Konto, werden hochgeladene Dateien im Google Drive dieses Kontos gespeichert und alle Kalendereinträge (Produktionen, Jobs mit eingeteilter Crew, Termine, „Nicht verfügbar: Name“ – ohne private Notiz) in einen Google-Kalender dieses Kontos übertragen. Google kann Daten in Drittländern (u. a. USA) verarbeiten. [Rechtsgrundlage, Auftragsverarbeitung bzw. Nutzungsbedingungen des Google-Kontos, Drittlandübermittlung prüfen.]
+- **Google-Kalender-Link (nur auf eigenen Wunsch):** Wählt jemand bei „In privaten Kalender“ den Google Kalender, sendet der Browser Titel, Zeit, Ort, Beschreibung und den Link zum Eintrag an Google, damit der Termin dort vorausgefüllt erscheint. Namen von Mitgliedern setzt die App nicht ein; selbst eingetragene Notizen können jedoch Teil der Beschreibung sein. Ohne diesen Klick findet keine Übermittlung statt.
 - **Push-Dienste der Browser-Hersteller** (Google, Mozilla, Apple, Microsoft): Push-Mitteilungen werden verschlüsselt über den Dienst des jeweiligen Browsers zugestellt; der Inhalt ist für den Dienst nicht lesbar.
 - **E-Mail-Versand:** Einladungen und „Passwort vergessen“ über [Mail-Anbieter/eigener Mailserver].
 

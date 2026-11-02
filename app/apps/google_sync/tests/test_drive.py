@@ -124,8 +124,37 @@ def test_purge_deletes_drive_files(org, connected, google, concert):
     )
     from apps.productions.tasks import purge_deleted_productions
 
+    pk = concert.pk
+    connected.refresh_from_db()
+    folder = connected.folder_ids[f"production:{pk}"]
+
     purge_deleted_productions()
+
     assert not google.files
+    assert folder not in google.folders
+    connected.refresh_from_db()
+    assert f"production:{pk}" not in connected.folder_ids
+
+
+def test_purge_keeps_going_when_folder_cannot_be_removed(org, connected, google, concert):
+    drive.upload(org, _file(), production=concert)
+    concert.soft_delete()
+    Production.all_objects.filter(pk=concert.pk).update(
+        deleted_at=timezone.now() - timedelta(days=8)
+    )
+    from apps.google_sync.google_api import GoogleError
+    from apps.productions.tasks import purge_deleted_productions
+
+    original = google.delete_file
+
+    def delete_then_fail(file_id):
+        original(file_id)
+        google.fail_with = GoogleError("Nicht erreichbar")
+
+    google.delete_file = delete_then_fail
+
+    assert purge_deleted_productions() == 1
+    assert not Production.all_objects.filter(pk=concert.pk).exists()
 
 
 def test_material_upload_and_defect_photo(org, connected, google, owner, login, make_material):

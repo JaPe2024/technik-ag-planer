@@ -16,6 +16,7 @@ def purge_deleted_productions():
 
     for production in Production.all_objects.filter(deleted_at__lt=cutoff):
         drive.delete_all(production.attachments.all())  # Abschnitt 2: auch im Drive löschen
+        drive.trash_production_folder(production)
         production.delete()
         count += 1
     return count

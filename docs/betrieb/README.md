@@ -26,6 +26,15 @@ dc ps                                      # alles „healthy“/„running“?
 
 Mit veröffentlichten Images (Git-Tag `vX.Y.Z` erzeugt `ghcr.io/labstorm-mg/technik-ag-planer:X.Y.Z`): in der `.env` `APP_VERSION=X.Y.Z` setzen, dann `dc pull && dc up -d`. Migrationen laufen automatisch. Vorher eine Sicherung machen (siehe unten) und den [CHANGELOG](../../CHANGELOG.md) lesen. Die Version steht in der App unter Einstellungen → Über die App.
 
+## Zugangsdaten ändern
+
+```sh
+git pull
+deploy/betrieb/zugangsdaten.sh
+```
+
+Das Skript fragt jeden Schritt einzeln ab (`y`/`n`): Datenbank-Passwort (mit Sicherung vorab, Eintrag in der `.env` und Neustart der App), Passwort eines Betreiber-Kontos und passwortfreies sudo ein- oder ausschalten. Bevor es passwortfreies sudo entfernt, prüft es dein Passwort, damit du dich nicht aussperrst. Mitglieder der Gruppen `docker` und `lxd` haben auf dem Server auch ohne sudo faktisch Root-Rechte.
+
 ## Backups
 
 Gesichert werden die **Datenbank** und die **`.env`** (enthält Geheimnisse – sicher aufbewahren).

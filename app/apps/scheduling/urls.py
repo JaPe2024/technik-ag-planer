@@ -35,4 +35,22 @@ urlpatterns = [
     path("ics/job/<int:pk>/", views.ics_job, name="ics_job"),
     path("ics/termin/<int:pk>/", views.ics_event, name="ics_event"),
     path("ics/nicht-verfuegbar/<int:pk>/", views.ics_unavailability, name="ics_unavailability"),
+    path(
+        "privater-kalender/produktion/<int:pk>/",
+        views.private_calendar_production,
+        name="private_calendar_production",
+    ),
+    path(
+        "privater-kalender/job/<int:pk>/", views.private_calendar_job, name="private_calendar_job"
+    ),
+    path(
+        "privater-kalender/termin/<int:pk>/",
+        views.private_calendar_event,
+        name="private_calendar_event",
+    ),
+    path(
+        "privater-kalender/nicht-verfuegbar/<int:pk>/",
+        views.private_calendar_unavailability,
+        name="private_calendar_unavailability",
+    ),
 ]

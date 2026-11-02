@@ -7,5 +7,5 @@
       {% if e.start_time %}{{ e.start_time|time:"H:i" }}{% if e.end_time %}–{{ e.end_time|time:"H:i" }}{% endif %} Uhr{% elif e.detail %}{{ e.detail }}{% elif e.is_multi_day %}{{ e.start_date|date:"d.m." }}–{{ e.end_date|date:"d.m." }}{% else %}ganztägig{% endif %}{% if e.location %} · {{ e.location }}{% endif %}{% if e.suffix %} · {{ e.suffix }}{% endif %}
     </span>
   </div>
-  {% if e.ics_url %}<a class="button button--secondary button--small" href="{{ e.ics_url }}" title="In Kalender übernehmen" aria-label="{{ e.title }} in Kalender übernehmen">.ics</a>{% endif %}
+  {% if e.calendar_url %}<a class="icon-button" href="{{ e.calendar_url }}" data-sheet-url title="In privaten Kalender" aria-label="{{ e.title }} in privaten Kalender">{% include "includes/icon.html" with name="calendar" %}</a>{% endif %}
 </li>

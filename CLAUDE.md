@@ -3,6 +3,7 @@
 Spezifikation: `docs/feature-liste.md` (nicht hier kopieren). Ablauf und Meilensteine: Abschnitt 15, Umsetzungsstand und Entscheidungen: Abschnitt 16 (nach jedem Meilenstein fortschreiben).
 
 **Stand: Alle 12 Meilensteine umgesetzt – Wartung und Ideen aus Abschnitt 16 („Vor dem Start“, „Ideen für später“).** Weiter mit Branch, Plan, PR wie bisher; Materialerweiterung M13 ist im Fork implementiert; Übernahmeprüfungen sind offen (Abschnitt 16 und `docs/entwicklung/materialerweiterung.md`). ADR 0020 beschreibt diese Erweiterung; neue Entscheidungen ab 0021.
+**Stand: Alle 12 Meilensteine umgesetzt – Wartung und Ideen aus Abschnitt 16 („Vor dem Start“, „Ideen für später“).** Weiter mit Branch, Plan, PR wie bisher; neue Entscheidungen als ADR ab 0022.
 
 ## Regeln
 
@@ -44,10 +45,10 @@ Spezifikation: `docs/feature-liste.md` (nicht hier kopieren). Ablauf und Meilens
 | --- | --- | --- |
 | `core` | Navigation, Landingpage, Hilfe & FAQ, Über die App, Rechtstexte (`LegalPage`), CSP-Middleware, Health-Check | 0003, 0014 |
 | `accounts` | Konten, Login, 2FA, Passwort, Profil, Konto löschen | 0004, 0011 |
-| `organizations` | AGs, Rollen und Rechte, Einladungen, Einstellungen, Schuljahreswechsel, Datenexport, `beispieldaten` | 0004, 0011, 0017 |
+| `organizations` | AGs, Rollen und Rechte, Einladungen, Einstellungen, Schuljahreswechsel, Datenexport, `beispieldaten` | 0004, 0011, 0017, 0021 |
 | `audit` | Änderungsprotokoll (7 Tage) | 0004 |
 | `productions` | Produktionen (weich gelöscht: `objects` / `all_objects`), Jobs, Crew, To-dos, Kategorien, Status, Dashboard, Fähigkeiten, Einsatzübersicht | 0005, 0011 |
-| `scheduling` | Kalender, Termine und Serien, „Nicht verfügbar“, Stundenraster, ICS | 0006, 0019 |
+| `scheduling` | Kalender, Termine und Serien, „Nicht verfügbar“, Stundenraster, ICS | 0006, 0019, 0020 |
 | `board` | Board, Produktions-Chats, Systemmeldungen (Signale), Lesestand | 0007 |
 | `inquiries` | Technik-Anfragen: öffentlicher Link, Formular, Technik-Auswahl je AG, Spam-Schutz, geteilte Ansicht Anfrage/Produktion | 0009, 0018 |
 | `inventory` | Material, Kategorien, Defekte, Materialsätze, Planung und Packliste; im Fork zusätzlich optionaler QR-Modus, Einzelgeräte, Reservierungen, Mengenbewegungen und Abbau | 0008, 0020 |

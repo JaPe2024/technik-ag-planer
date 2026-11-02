@@ -6,10 +6,10 @@ Owner sind bewusst Schülerinnen oder Schüler („Schüler lernen von Schülern
 
 1. Die Einladungs-Mail des Betreibers öffnen, Namen und Passwort setzen.
 2. Die App auf dem Handy installieren (siehe [Mitglieder-Handbuch](mitglieder.md#app-installieren)).
-3. Einstellungen → **Stundenraster** prüfen (Beginn und Ende der Schulstunden) – nötig für Freistellungsliste und Eingabe „1.–4. Stunde“.
-4. Einstellungen → **Kategorien** und **Status-Werte** anpassen (z. B. „Abgesagt“ ergänzen).
-5. Einstellungen → **Fähigkeiten** anlegen (z. B. Licht, Ton, Bühne, Kamera).
-6. Optional, empfohlen: Einstellungen → **Zwei-Faktor für alle Mitglieder**.
+3. Einstellungen → AG anpassen → **Stundenraster** prüfen (Beginn und Ende der Schulstunden) – nötig für Freistellungsliste und Eingabe „1.–4. Stunde“.
+4. Einstellungen → AG anpassen → **Kategorien** und **Status-Werte** anpassen (z. B. „Abgesagt“ ergänzen).
+5. Einstellungen → AG anpassen → **Fähigkeiten** anlegen (z. B. Licht, Ton, Bühne, Kamera).
+6. Optional, empfohlen: Einstellungen → AG anpassen → **Zwei-Faktor für alle Mitglieder**.
 
 ## 2. Mitglieder und Rollen
 
@@ -26,17 +26,17 @@ Die vollständige Tabelle steht in Abschnitt 2 der [Feature-Liste](../feature-li
 
 ## 3. Google-Konto der AG
 
-Einstellungen → **Google-Konto** → „Mit Google verbinden“ mit einem normalen Google-Konto der AG (kein Schulkonto). Danach landen hochgeladene Dateien im Drive-Ordner „Technik-AG Planer – <AG>“ und alle Einträge im Kalender „Technik-AG Planer – <AG>“.
+Einstellungen → AG anpassen → **Google-Konto** → „Mit Google verbinden“ mit einem normalen Google-Konto der AG (kein Schulkonto). Danach landen hochgeladene Dateien im Drive-Ordner „Technik-AG Planer – <AG>“ und alle Einträge im Kalender „Technik-AG Planer – <AG>“.
 
 Damit Mitglieder den Kalender abonnieren können: in Google Kalender (angemeldet mit dem AG-Konto) beim Kalender → Einstellungen und Freigabe → **Für bestimmte Personen freigeben** → Google-Adressen der Mitglieder eintragen. Nicht öffentlich freigeben.
 
 ## 4. Technik-Anfragen
 
-Einstellungen → **Technik anfragen** → Link aktivieren und an Schulleitung und Kollegium weitergeben. Neue Anfragen erscheinen oben in der Produktionsliste; „Übernehmen“ öffnet die geteilte Ansicht zum Anlegen der Produktion. Bei Spam: „Neuen Link erzeugen“.
+Einstellungen → AG anpassen → **Technik anfragen** → Link aktivieren und an Schulleitung und Kollegium weitergeben. Neue Anfragen erscheinen oben in der Produktionsliste; „Übernehmen“ öffnet die geteilte Ansicht zum Anlegen der Produktion. Bei Spam: „Neuen Link erzeugen“.
 
 ## 5. Schuljahreswechsel
 
-In den Sommerferien: Einstellungen → **Schuljahreswechsel**. Die Vorschau zeigt, wer in welche Stufe wechselt; aus Q2 wird „Extern“. Geht nur einmal je Schuljahr.
+In den Sommerferien: Einstellungen → AG anpassen → **Schuljahreswechsel**. Die Vorschau zeigt, wer in welche Stufe wechselt; aus Q2 wird „Extern“. Geht nur einmal je Schuljahr.
 
 ## 6. Übergabe
 

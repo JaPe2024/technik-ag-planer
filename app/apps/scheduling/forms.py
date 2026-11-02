@@ -131,7 +131,7 @@ class EventEditScopeForm(forms.Form):
         label="Ändern für",
         choices=[("single", "Nur diesen Termin"), ("following", "Diesen und alle folgenden")],
         initial="single",
-        widget=forms.RadioSelect,
+        widget=SegmentedRadio,
     )
 
 

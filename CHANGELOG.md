@@ -24,18 +24,27 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 
 **Oberfläche**
 
+- Einstellungen: Unterseite „AG anpassen“ für alles, was je AG einstellbar ist; die ganze Zeile ist anklickbar
+- Hinweis für den Owner, solange kein Google-Konto verbunden ist oder der Abgleich fehlschlägt
+- Behoben: Fehler beim Google-Abgleich zeigten weiter „verbunden“
+- Behoben: Ordner endgültig gelöschter Produktionen blieben im Drive liegen; sie kommen jetzt in den Papierkorb
+- „In privaten Kalender“ ersetzt alle .ics-Knöpfe: Auswahl aus Google Kalender (ohne Datei), Apple Kalender (direkter Dialog) und Datei herunterladen
 - Nach dem Anlegen einer Produktion aus einer Anfrage fragt die App, ob die Anfrage erledigt ist
 - Kalender: kein doppelter Eintrag mehr für Produktion und Jobs am selben Tag, aufgeräumter Kopfbereich
 - Board: Das Eingabefeld macht die Seite auf dem Handy nicht mehr zu breit
-- Crew und Termine: Schalter „Anfragen | Direkt einteilen“ im einheitlichen Stil
+- Board: Beim Senden bleibt die Tastatur offen, der Chat scrollt zuverlässig zur neuen Nachricht
+- Board: Das Eingabefeld steht fest am unteren Bildschirmrand
+- Crew und Termine: Schalter „Anfragen | Direkt einteilen“ im einheitlichen Stil; auch Erinnerungszeitpunkt und Serien-Auswahl nutzen ihn
 - Produktionsseite: Ort und Notizen kompakt in einer Karte, Kopf des Jobs-Bereichs bricht sauber um
 
 **Betrieb**
 
+- Skript `deploy/betrieb/zugangsdaten.sh`: Datenbank- und Betreiber-Passwort ändern, passwortfreies sudo ein- oder ausschalten
 - Gunicorn startet ohne ungenutzten Steuerzugang, die Fehlermeldung beim Start entfällt
 
 **Sicherheit**
 
+- Sicherheits-Updates: `certifi`, `brotli`, `brotlicffi`, `pyasn1`
 - Betreiber-Konten können nicht mehr eingeladen werden, keiner AG beitreten und nicht Owner werden
 
 **Betrieb**

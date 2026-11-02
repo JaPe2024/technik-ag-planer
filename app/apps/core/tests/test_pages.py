@@ -90,7 +90,8 @@ def test_settings_has_no_placeholders_and_shows_status(org, owner, login):
     link = link_for(org)
     link.is_active = True
     link.save()
-    content = login(owner.user, org).get(reverse("organizations:settings")).content.decode()
+    client = login(owner.user, org)
+    content = client.get(reverse("organizations:settings")).content.decode()
     assert "folgt in M" not in content
-    assert "Link ist aktiv" in content
+    assert "Link ist aktiv" in client.get(reverse("organizations:customize")).content.decode()
     assert reverse("core:help") in content and reverse("core:about") in content

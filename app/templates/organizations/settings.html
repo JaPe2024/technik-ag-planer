@@ -8,19 +8,23 @@
     <p><span class="tag tag--accent">{{ current_membership.get_role_display }}</span></p>
   </header>
   <div class="stack">
+    {% if google_problem %}
+      <div class="message message--error stack-tight" role="alert">
+        <p>Problem mit der Google-Verbindung: {{ google_problem }}</p>
+        <a class="button button--primary button--small" href="{% url 'google_sync:settings' %}">Zum Google-Konto</a>
+      </div>
+    {% elif show_google_hint %}
+      <div class="message message--warning stack-tight" role="status">
+        <p>Kein Google-Konto verbunden, daher steht nicht der volle Funktionsumfang zur Verfügung.</p>
+        <a class="button button--primary button--small" href="{% url 'google_sync:settings' %}">Google-Konto verbinden</a>
+      </div>
+    {% endif %}
     {% for title, entries in groups %}
       <section>
         <h2 class="section-title">{{ title }}</h2>
-        <ul class="list">
+        <ul class="list list--rows">
           {% for entry in entries %}
-            <li class="list__item">
-              <div class="list__main">
-                <a class="list__link list__title" href="{% url entry.url_name %}">{{ entry.label }}</a>
-                <span class="list__subtitle">{{ entry.subtitle }}</span>
-              </div>
-              {% if entry.url_name == "inquiries:settings" %}<span class="tag{% if inquiry_link_active %} tag--success{% endif %}">{% if inquiry_link_active %}Link ist aktiv{% else %}aus{% endif %}</span>{% endif %}
-              {% if entry.url_name == "google_sync:settings" and google_connected %}<span class="tag tag--success">verbunden</span>{% endif %}
-            </li>
+            {% include "organizations/includes/settings_row.html" %}
           {% endfor %}
           {% if title == "Konto" %}
             <li class="list__item">
