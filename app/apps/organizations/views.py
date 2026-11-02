@@ -57,6 +57,7 @@ def switch_organization(request):
 
 @org_required
 def settings_index(request):
+    google_connected = connection_for(request.organization) is not None
     return render(
         request,
         "organizations/settings.html",
@@ -66,7 +67,11 @@ def settings_index(request):
             "inquiry_link_active": InquiryLink.objects.filter(
                 organization=request.organization, is_active=True
             ).exists(),
-            "google_connected": connection_for(request.organization) is not None,
+            "google_connected": google_connected,
+            # Ohne Google-Projekt der Installation könnte der Owner nichts verbinden
+            "show_google_hint": request.membership.is_owner
+            and not google_connected
+            and bool(settings.GOOGLE_OAUTH_CLIENT_ID),
         },
     )
 

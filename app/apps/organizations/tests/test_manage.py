@@ -136,3 +136,21 @@ def test_dissolve_with_productions(org, owner_client, make_production, make_job)
     make_job(make_production(org))
     owner_client.post(reverse("organizations:dissolve"), {"confirm_name": org.name})
     assert not Organization.objects.filter(pk=org.pk).exists()
+
+
+def test_customization_group_collects_org_settings(org, owner, make_member, login):
+    from apps.organizations.settings_menu import visible_groups
+
+    labels = dict(visible_groups(owner))["Anpassung"]
+    assert [e.label for e in labels] == [
+        "Kategorien",
+        "Material-Kategorien",
+        "Status-Werte",
+        "Fähigkeiten",
+        "Technik-Auswahl",
+        "Stundenraster",
+    ]
+
+    teacher = dict(visible_groups(make_member(org, Role.TEACHER)))["Anpassung"]
+    assert [e.label for e in teacher] == ["Technik-Auswahl"]
+    assert "Anpassung" not in dict(visible_groups(make_member(org, Role.STUDENT)))

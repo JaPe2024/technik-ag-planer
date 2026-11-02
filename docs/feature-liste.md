@@ -370,20 +370,21 @@ Diese Funktionen gelten für alle Mitglieder und begleiten Planung und Einteilun
 
 ## 10. Einstellungen
 
-Die Einstellungen sind in fünf Gruppen gegliedert; oben steht die eigene Rolle als Badge.
+Die Einstellungen sind in sechs Gruppen gegliedert; oben steht die eigene Rolle als Badge.
 
 | Gruppe | Eintrag | Funktion / Untertitel |
 | --- | --- | --- |
 | Team | Mitglieder | Liste mit Anzahl und Fähigkeiten; einladen und Rollen vergeben nur durch den Owner |
 | Team | Organisation verwalten | Ownership übertragen, verlassen oder auflösen |
-| Planung | Kategorien | Produktions-Kategorien verwalten und sortieren (Name, Farbe) |
+| Anpassung | Kategorien | Produktions-Kategorien verwalten und sortieren (Name, Farbe) |
+| Anpassung | Material-Kategorien | Kategorien für Material verwalten und sortieren (Name, Farbe) |
+| Anpassung | Status-Werte | Status für Produktionen mit Name und Farbe anlegen und sortieren (nur Owner) |
+| Anpassung | Fähigkeiten | Fähigkeiten zur Auswahl anlegen, umbenennen, sortieren, löschen (nur Owner) |
+| Anpassung | Technik-Auswahl | Ankreuzliste im Anfrage-Formular verwalten und sortieren |
+| Anpassung | Stundenraster | Unterrichtsstunden mit Beginn und Ende festlegen (nur Owner) |
 | Planung | Technik anfragen | Öffentlichen Anfrage-Link verwalten, Status „Link ist aktiv“ |
-| Planung | Technik-Auswahl | Ankreuzliste im Anfrage-Formular verwalten und sortieren |
 | Planung | Kürzlich gelöscht | Gelöschte Produktionen 7 Tage lang wiederherstellen |
 | Planung | Google-Konto | Google-Konto der AG für Drive und Kalender verbinden, Status anzeigen, trennen (nur Owner) |
-| Planung | Stundenraster | Unterrichtsstunden mit Beginn und Ende festlegen (nur Owner) |
-| Planung | Fähigkeiten | Fähigkeiten zur Auswahl anlegen, umbenennen, sortieren, löschen (nur Owner) |
-| Planung | Status-Werte | Status für Produktionen mit Name und Farbe anlegen und sortieren (nur Owner) |
 | Planung | Schuljahreswechsel | Alle Jahrgangsstufen um eins erhöhen, Q2 wird „Extern“ (nur Owner) |
 | Datenschutz | Zwei-Faktor für alle Mitglieder | Pflicht ein/aus, Standard „Aus – freiwillig je Person“ |
 | Für mich | Benachrichtigungen | Push-Mitteilungen aktivieren und einstellen |
@@ -586,6 +587,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | – | Wartung 1: Termin-Erinnerungen, Einladungen aufräumen | fertig | #15 |
 | – | Betreiber-Konten von AGs trennen | fertig | #17 |
 | – | Technik-Auswahl im Anfrage-Formular je AG | fertig | #18 |
+| – | Einstellungen: Gruppe „Anpassung“, ganze Zeile anklickbar, Google-Hinweis für den Owner | fertig | #25 |
 | – | Dashboard-Kachel und Navigations-Zähler für offene Technik-Anfragen | fertig | #19 |
 | – | Oberfläche: Nachfrage bei Anfragen, Kalender, Board auf dem Handy, Crew-Schalter, Produktionsseite | fertig | #20, #21 |
 | – | „In privaten Kalender“ mit Auswahl Google, Apple, Datei | fertig | #22 |

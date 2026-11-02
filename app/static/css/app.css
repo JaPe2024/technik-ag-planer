@@ -666,6 +666,41 @@ a.list__item:hover,
   background: var(--color-surface-raised);
 }
 
+/* Ganze Zeile anklickbar: Der Link spannt sich über die Zeile */
+.list--rows .list__item:has(.list__link) {
+  position: relative;
+}
+
+.list--rows .list__item:has(.list__link):hover {
+  background: var(--color-surface-raised);
+}
+
+.list--rows .list__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.list--rows .list__link:focus-visible {
+  outline: none;
+}
+
+.list--rows .list__link:focus-visible::after {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.stack-tight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.stack-tight p {
+  margin: 0;
+}
+
 .list__main {
   flex: 1 1 200px;
   min-width: 0;

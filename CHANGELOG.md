@@ -13,6 +13,7 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 
 **Oberfläche**
 
+- Einstellungen: neue Gruppe „Anpassung“ für alles, was je AG einstellbar ist; ganze Zeile anklickbar; Hinweis für den Owner, solange kein Google-Konto verbunden ist
 - „In privaten Kalender“ ersetzt alle .ics-Knöpfe: Auswahl aus Google Kalender (ohne Datei), Apple Kalender (direkter Dialog) und Datei herunterladen
 - Nach dem Anlegen einer Produktion aus einer Anfrage fragt die App, ob die Anfrage erledigt ist
 - Kalender: kein doppelter Eintrag mehr für Produktion und Jobs am selben Tag, aufgeräumter Kopfbereich

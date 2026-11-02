@@ -8,10 +8,16 @@
     <p><span class="tag tag--accent">{{ current_membership.get_role_display }}</span></p>
   </header>
   <div class="stack">
+    {% if show_google_hint %}
+      <div class="message message--warning stack-tight" role="status">
+        <p>Noch kein Google-Konto verbunden. Ohne Verbindung steht nicht der volle Funktionsumfang zur Verfügung: Datei-Uploads und die Übertragung in den Google Kalender fehlen.</p>
+        <a class="button button--primary button--small" href="{% url 'google_sync:settings' %}">Google-Konto verbinden</a>
+      </div>
+    {% endif %}
     {% for title, entries in groups %}
       <section>
         <h2 class="section-title">{{ title }}</h2>
-        <ul class="list">
+        <ul class="list list--rows">
           {% for entry in entries %}
             <li class="list__item">
               <div class="list__main">

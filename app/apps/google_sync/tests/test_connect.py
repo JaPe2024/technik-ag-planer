@@ -117,3 +117,39 @@ def test_only_owner(org, make_member, login, google, role):
 def test_settings_menu_links_google(owner_client):
     content = owner_client.get(reverse("organizations:settings")).content.decode()
     assert reverse("google_sync:settings") in content
+
+
+# ---------- Hinweis in den Einstellungen ----------
+
+HINT = "Noch kein Google-Konto verbunden"
+
+
+@pytest.fixture
+def configured(settings):
+    settings.GOOGLE_OAUTH_CLIENT_ID = "client-id"
+
+
+def _settings_page(client):
+    return client.get(reverse("organizations:settings")).content.decode()
+
+
+def test_owner_sees_google_hint_with_link(org, owner, login, configured):
+    content = _settings_page(login(owner.user, org))
+
+    assert HINT in content
+    assert reverse("google_sync:settings") in content
+
+
+def test_no_hint_when_connected(org, owner, login, configured, connected):
+    assert HINT not in _settings_page(login(owner.user, org))
+
+
+def test_no_hint_without_google_project(org, owner, login, settings):
+    settings.GOOGLE_OAUTH_CLIENT_ID = ""
+
+    assert HINT not in _settings_page(login(owner.user, org))
+
+
+@pytest.mark.parametrize("role", [Role.ADMIN, Role.TEACHER, Role.STUDENT])
+def test_only_owner_sees_hint(org, make_member, login, configured, role):
+    assert HINT not in _settings_page(login(make_member(org, role).user, org))

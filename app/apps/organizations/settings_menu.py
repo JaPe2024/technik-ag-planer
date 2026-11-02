@@ -36,7 +36,7 @@ GROUPS = [
         ],
     ),
     (
-        "Planung",
+        "Anpassung",
         [
             Entry(
                 "Kategorien",
@@ -51,16 +51,39 @@ GROUPS = [
                 perm=Perm.MANAGE_CATEGORIES_AND_INQUIRY_LINK,
             ),
             Entry(
-                "Technik anfragen",
-                "Öffentlichen Anfrage-Link verwalten",
-                "inquiries:settings",
-                perm=Perm.MANAGE_CATEGORIES_AND_INQUIRY_LINK,
+                "Status-Werte",
+                "Status für Produktionen mit Name und Farbe",
+                "productions:statuses",
+                owner_only=True,
+            ),
+            Entry(
+                "Fähigkeiten",
+                "Fähigkeiten zur Auswahl anlegen, umbenennen, sortieren, löschen",
+                "productions:skills",
+                owner_only=True,
             ),
             Entry(
                 "Technik-Auswahl",
                 "Ankreuzliste im Anfrage-Formular verwalten und sortieren",
                 "inquiries:tech_options",
                 perm=Perm.MANAGE_TECH_OPTIONS,
+            ),
+            Entry(
+                "Stundenraster",
+                "Unterrichtsstunden mit Beginn und Ende festlegen",
+                "scheduling:periods",
+                owner_only=True,
+            ),
+        ],
+    ),
+    (
+        "Planung",
+        [
+            Entry(
+                "Technik anfragen",
+                "Öffentlichen Anfrage-Link verwalten",
+                "inquiries:settings",
+                perm=Perm.MANAGE_CATEGORIES_AND_INQUIRY_LINK,
             ),
             Entry(
                 "Kürzlich gelöscht",
@@ -72,24 +95,6 @@ GROUPS = [
                 "Google-Konto",
                 "Google-Konto der AG für Drive und Kalender verbinden",
                 "google_sync:settings",
-                owner_only=True,
-            ),
-            Entry(
-                "Stundenraster",
-                "Unterrichtsstunden mit Beginn und Ende festlegen",
-                "scheduling:periods",
-                owner_only=True,
-            ),
-            Entry(
-                "Fähigkeiten",
-                "Fähigkeiten zur Auswahl anlegen, umbenennen, sortieren, löschen",
-                "productions:skills",
-                owner_only=True,
-            ),
-            Entry(
-                "Status-Werte",
-                "Status für Produktionen mit Name und Farbe",
-                "productions:statuses",
                 owner_only=True,
             ),
             Entry(
