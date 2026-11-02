@@ -77,6 +77,7 @@ Jede Technik-AG ist eine eigene Organisation; ein Konto kann in mehreren Organis
 - Datenexport einer AG (alle Daten der Organisation, z. B. als Archiv mit CSV- oder JSON-Dateien) – nur im Django-Admin, nicht für Owner oder Mitglieder
 - Internes Änderungsprotokoll: wer hat was wann geändert; Einträge werden nach 7 Tagen automatisch gelöscht; nur im Django-Admin einsehbar
 - Der Django-Admin ist nur für den Betreiber zugänglich, nicht für Owner oder Mitglieder
+- Betreiber-Konten treten keiner AG bei; wer auch in einer AG mitarbeitet, nutzt dafür eine zweite E-Mail-Adresse
 
 **Organisation**
 
@@ -578,6 +579,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | 11 | PWA und Push | fertig (Test auf echten Handys steht aus) | #13 |
 | 12 | Abschluss | fertig | #14 |
 | – | Wartung 1: Termin-Erinnerungen, Einladungen aufräumen | fertig | #15 |
+| – | Betreiber-Konten von AGs trennen | fertig | #17 |
 
 **Ergänzungen und Abweichungen**
 
@@ -635,6 +637,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | Betrieb | Optionale Ergänzung für den Betrieb hinter einem vorgeschalteten Reverse Proxy: Caddy spricht nur HTTP und glaubt Weiterleitungs-Header nur von `TRUSTED_PROXY` | Server ohne eigene öffentliche Adresse; sonst Weiterleitungsschleife und falsche Besucher-Adressen | ADR 0016 |
 | Push | Erinnerungen auch vor zugesagten Terminen mit Uhrzeit (gleiche Einstellungen wie bei Jobs) | Idee aus Abschnitt 16 | ADR 0015 |
 | Datenschutz | Erledigte Einladungen (abgelaufen, zurückgezogen, angenommen) werden nach 30 Tagen gelöscht | Datensparsamkeit (Abschnitt 11) | ADR 0015 |
+| Sicherheit | Betreiber-Konten werden nicht eingeladen, treten keiner AG bei und werden nicht Owner | Das Konto mit Vollzugriff soll nicht im App-Alltag laufen | ADR 0017 |
 | Google | Kein Drive-Anhang am Google-Termin; der Termin verlinkt in die App | Dateien liegen privat im Drive der AG – Abonnenten könnten Anhänge nicht öffnen | ADR 0015 |
 | Entwicklung | Beispielkonten `owner@example.org`, `lehrer@…`, `schueler@…` …, Passwort jeweils der Name vor dem @ (M6–M11 mit Login ohne @; seit M12 wieder E-Mail-Eingabe) | Schneller durchklicken (Entscheidung des Projektinhabers) | README |
 | Repository | Kein `CONTRIBUTING.md` und kein `SECURITY.md`: Die Zustimmung zur Lizenz steht in der Pull-Request-Vorlage, Sicherheitslücken werden privat über GitHub gemeldet | Entscheidung des Projektinhabers, weniger Dateien | Abschnitt 13 |
@@ -653,3 +656,4 @@ Alle Meilensteine sind umgesetzt. Vor dem Einsatz an der Schule stehen noch aus:
 **Ideen für später**
 
 - Freistellungsliste an eine Vorlage der Schule anpassen (Abschnitt 9) – sobald die Vorlage vorliegt
+- Besser gestaltete E-Mails für Einladung und „Passwort vergessen“

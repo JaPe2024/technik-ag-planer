@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import pytest
 from django.core import mail
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils import timezone
 
@@ -133,6 +134,92 @@ def test_expired_link(org, client):
 
     assert response.status_code == 410
     assert "abgelaufen" in response.content.decode()
+
+
+@pytest.fixture
+def operator(db):
+    return User.objects.create_superuser("betreiber@example.org", "Betreiber-Passwort-1")
+
+
+def test_owner_cannot_invite_operator(owner_client, org, operator):
+    response = owner_client.post(
+        reverse("organizations:invite"),
+        {"email": "BETREIBER@example.org", "role": Role.STUDENT},
+        follow=True,
+    )
+
+    assert not Invitation.objects.for_org(org).exists()
+    assert services.OPERATOR_NOT_ALLOWED in response.content.decode()
+
+
+@pytest.mark.parametrize(
+    "flags", [{"is_staff": True}, {"is_superuser": True}], ids=["staff", "superuser"]
+)
+def test_invite_service_rejects_every_operator_kind(org, flags):
+    User.objects.create_user("b@example.org", "Betreiber-Passwort-1", **flags)
+
+    with pytest.raises(ValidationError):
+        services.invite(org, "b@example.org", Role.STUDENT, send=False)
+
+
+def _invitation_before_promotion(org, operator):
+    """Einladung von vor der Betreiber-Ernennung: Konto war da noch normal."""
+    User.objects.filter(pk=operator.pk).update(is_staff=False, is_superuser=False)
+    invitation, token = services.invite(org, operator.email, Role.STUDENT, send=False)
+    User.objects.filter(pk=operator.pk).update(is_staff=True, is_superuser=True)
+    operator.refresh_from_db()
+    return invitation, token
+
+
+def test_operator_cannot_accept_old_invitation(org, operator, login):
+    invitation, token = _invitation_before_promotion(org, operator)
+    client = login(operator)
+    url = reverse("organizations:accept_invitation", args=[token])
+
+    assert client.get(url).status_code == 410
+    response = client.post(url)
+
+    assert response.status_code == 410
+    assert services.OPERATOR_NOT_ALLOWED in response.content.decode()
+    assert not Membership.objects.filter(user=operator).exists()
+    invitation.refresh_from_db()
+    assert invitation.accepted_at is None
+
+
+def test_accept_service_rejects_operator(org, operator):
+    invitation, _ = _invitation_before_promotion(org, operator)
+
+    with pytest.raises(ValidationError):
+        services.accept(invitation, operator)
+
+    assert not Membership.objects.filter(user=operator).exists()
+
+
+def test_resend_rejects_operator(org, operator):
+    invitation, _ = _invitation_before_promotion(org, operator)
+
+    with pytest.raises(ValidationError):
+        services.resend(invitation)
+
+
+def test_operator_member_cannot_become_owner(org, owner, operator):
+    membership = Membership.objects.create(organization=org, user=operator, role=Role.ADMIN)
+
+    with pytest.raises(ValidationError):
+        services.make_owner(membership)
+
+    owner.refresh_from_db()
+    assert owner.role == Role.OWNER
+
+
+def test_existing_normal_account_still_joins_with_one_click(org, other_org, make_member, login):
+    member = make_member(other_org, Role.STUDENT)
+    _, token = services.invite(org, member.user.email, Role.STUDENT, send=False)
+
+    response = login(member.user).post(reverse("organizations:accept_invitation", args=[token]))
+
+    assert response.status_code == 302
+    assert Membership.objects.for_org(org).filter(user=member.user).exists()
 
 
 def test_invitation_is_valid_for_seven_days(org):

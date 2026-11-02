@@ -7,12 +7,27 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 
 from .models import Invitation, Membership, Organization, hash_token
 from .permissions import Role
+
+OPERATOR_NOT_ALLOWED = (
+    "Betreiber-Konten können keiner AG beitreten. Bitte eine andere E-Mail-Adresse verwenden."
+)
+
+
+def is_operator_email(email):
+    """Gehört die Adresse zu einem Betreiber-Konto (ADR 0017)?"""
+    return (
+        get_user_model()
+        .objects.filter(email__iexact=email)
+        .filter(Q(is_staff=True) | Q(is_superuser=True))
+        .exists()
+    )
 
 
 def invitation_url(token):
@@ -41,6 +56,8 @@ def invite(organization, email, role, invited_by=None, send=True):
     """Lädt eine E-Mail-Adresse ein. Eine ältere offene Einladung derselben Adresse
     wird dabei zurückgezogen, damit immer nur ein gültiger Link existiert."""
     email = email.strip().lower()
+    if is_operator_email(email):
+        raise ValidationError(OPERATOR_NOT_ALLOWED)
     if Membership.objects.for_org(organization).filter(user__email__iexact=email).exists():
         raise ValidationError("Diese Person ist bereits Mitglied der AG.")
 
@@ -61,6 +78,8 @@ def invite(organization, email, role, invited_by=None, send=True):
 def resend(invitation):
     if invitation.accepted_at is not None:
         raise ValidationError("Die Einladung wurde bereits angenommen.")
+    if is_operator_email(invitation.email):
+        raise ValidationError(OPERATOR_NOT_ALLOWED)
     token = invitation.renew_token()
     invitation.revoked_at = None
     invitation.save()
@@ -92,6 +111,8 @@ def find_open_invitation(token):
         return None, "Diese Einladung ist abgelaufen. Bitte frage nach einer neuen."
     if not invitation.organization.is_active:
         return None, "Diese AG ist derzeit deaktiviert."
+    if is_operator_email(invitation.email):
+        return None, OPERATOR_NOT_ALLOWED
     return invitation, None
 
 
@@ -103,6 +124,8 @@ def accept(invitation, user):
         raise ValidationError("Diese Einladung ist nicht mehr gültig.")
     if user.email.lower() != invitation.email.lower():
         raise ValidationError("Diese Einladung gilt für eine andere E-Mail-Adresse.")
+    if is_operator_email(user.email):
+        raise ValidationError(OPERATOR_NOT_ALLOWED)
 
     organization = invitation.organization
     membership = Membership.objects.for_org(organization).filter(user=user).first()
@@ -132,6 +155,8 @@ def create_account_and_accept(invitation, *, display_name, password, grade=""):
 @transaction.atomic
 def make_owner(membership):
     """Überträgt die Ownership. Der bisherige Owner wird Admin."""
+    if is_operator_email(membership.user.email):
+        raise ValidationError(OPERATOR_NOT_ALLOWED)
     organization = membership.organization
     previous = Membership.objects.for_org(organization).filter(role=Role.OWNER)
     for old_owner in previous.exclude(pk=membership.pk):

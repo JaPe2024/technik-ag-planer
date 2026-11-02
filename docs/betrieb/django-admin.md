@@ -11,6 +11,8 @@ docker compose -f deploy/docker-compose.yml exec web python manage.py createsupe
 make superuser
 ```
 
+Betreiber-Konten treten keiner AG bei und können nicht Owner werden. Wer auch selbst in einer AG mitarbeitet, nimmt dafür eine zweite E-Mail-Adresse.
+
 ## 2. Zwei-Faktor-Anmeldung einrichten
 
 Im Betrieb lässt der Admin nur Konten mit bestätigter Zwei-Faktor-Anmeldung herein (`DJANGO_ADMIN_REQUIRE_2FA=true`, Standard).

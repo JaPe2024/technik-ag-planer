@@ -46,6 +46,26 @@ def test_creating_org_sends_owner_invitation(admin_client, django_capture_on_com
     assert mail.outbox[0].to == ["owner@example.org"]
 
 
+def test_operator_cannot_be_entered_as_owner(admin_client, operator):
+    response = admin_client.post(
+        reverse("admin:organizations_organization_add"),
+        {
+            "name": "Technik-AG West",
+            "is_active": "on",
+            "owner_email": operator.email.upper(),
+            "memberships-TOTAL_FORMS": "0",
+            "memberships-INITIAL_FORMS": "0",
+            "invitations-TOTAL_FORMS": "0",
+            "invitations-INITIAL_FORMS": "0",
+        },
+    )
+
+    assert response.status_code == 200
+    assert services.OPERATOR_NOT_ALLOWED in response.content.decode()
+    assert not Organization.objects.filter(name="Technik-AG West").exists()
+    assert not Invitation.objects.exists()
+
+
 def test_members_cannot_access_admin(member_client, owner, login, org):
     for client in (member_client, login(owner.user, org)):
         response = client.get(reverse("admin:index"))

@@ -35,6 +35,14 @@ class OrganizationAdminForm(forms.ModelForm):
         if not self.instance.pk:
             self.fields["owner_email"].required = True
 
+    def clean_owner_email(self):
+        email = (self.cleaned_data.get("owner_email") or "").strip().lower()
+        owner = self.instance.owner_membership if self.instance.pk else None
+        unchanged = owner is not None and owner.user.email.lower() == email
+        if email and not unchanged and services.is_operator_email(email):
+            raise ValidationError(services.OPERATOR_NOT_ALLOWED)
+        return email
+
 
 class MembershipInline(admin.TabularInline):
     model = Membership
