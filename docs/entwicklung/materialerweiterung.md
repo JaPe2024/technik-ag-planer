@@ -142,3 +142,5 @@ Vor einer Übernahme verbleiben insbesondere:
 - Unterstützte Rücknahme/erneutes Öffnen eines abgeschlossenen Abbaus ist derzeit nicht implementiert.
 
 Diese Punkte sind ausdrücklich Restarbeiten für die Übernahme und keine zugesagten fertigen Funktionen.
+
+Aktualisierung der automatisierten Prüfung: Die vollständige Testsuite im lokalen PostgreSQL-Entwicklungscontainer besteht mit **909 Tests**. Der vollständige Ruff-Lauf (`ruff check .` und `ruff format --check .`, entsprechend `make lint`) ist grün. Echte Handy-/Kameratests, visuelle Abnahme und Upstream-Review bleiben offen.

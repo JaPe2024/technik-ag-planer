@@ -25,3 +25,5 @@ Der zusätzliche Modus erfordert eine Migration und Schutz beim Umschalten. Ein 
 Die sieben neuen Modelle sind beim bestehenden Audit-/Exportmechanismus registriert; gezielte Tests prüfen Export und Protokollierung. Löschpfade mit `PROTECT`, vollständige Regression, echte Mobilgeräte und Drucklayout sind vor Übernahme zu prüfen. Mengenverluste und Wiederöffnung eines abgeschlossenen Abbaus sind noch keine unterstützten Abläufe.
 
 Details, Modellübersicht, Migrationen, Teststände und Restarbeiten: [Entwicklerübergabe](../entwicklung/materialerweiterung.md). Bedienung: [Handbuch](../handbuch/material-scans.md).
+
+Die unveränderte Scanner-Fremdbibliothek ist gezielt vom Farbwerttest ausgenommen; ihre SHA-256-Prüfsumme und Lizenz werden separat getestet. Eigene Scanner-Templates, Styles und JavaScript bleiben vollständig in der Design-Token-Prüfung.

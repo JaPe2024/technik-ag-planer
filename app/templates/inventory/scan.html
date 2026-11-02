@@ -24,7 +24,7 @@
 <details><summary>Inventarcode manuell eingeben</summary><div class="inventory-manual-row"><label class="field"><span class="field__label">Inventarcode</span><input class="input" name="code" required maxlength="500" autocomplete="off" placeholder="z. B. MIC-01"></label><button class="button button--secondary">Erfassen</button></div></details>
 </form>
 <button class="button button--primary" type="button" id="camera">Kamera starten</button><div id="preview" hidden></div><p id="scan-status" role="status" aria-live="polite"></p>
-<p class="field__help">Etikett vor die Kamera halten. Der Scanner bleibt für weitere Geräte offen. Kamera benötigt HTTPS oder localhost.</p>
+<p class="field__help">Etikett vor die Kamera halten. Der Scanner bleibt für weitere Geräte offen.</p>
 </section>
 {% endif %}
 <section id="teardown-state" class="card stack"><div class="inventory-row-summary"><h2 class="section-title">Abbaukontrolle</h2><span class="tag {% if open_issue_count %}tag--warning{% else %}tag--success{% endif %}">{{ open_issue_count }} offene Geräterückgaben</span></div>
