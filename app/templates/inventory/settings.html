@@ -1,0 +1,19 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block title %}Materialverwaltung – Einstellungen{% endblock %}
+{% block topbar_title %}Einstellungen{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/inventory-units.css' %}">{% endblock %}
+{% block content %}
+<article class="stack inventory-workspace">
+<header class="page-header"><p class="eyebrow"><a href="{% url 'organizations:settings' %}">← Einstellungen</a></p><h1 class="page-title">Materialverwaltung</h1><p class="muted">Wähle einen Modus für deine gesamte AG. Es ist immer nur ein System aktiv.</p></header>
+<form method="post" class="form">{% csrf_token %}
+<div class="inventory-mode-grid">
+<label class="card inventory-mode"><input type="radio" name="mode" value="classic" {% if not current_organization.inventory_qr_enabled %}checked{% endif %}><span><strong>Klassische Liste</strong><span class="muted">Material als Mengen planen. Ausgabe und Rückgabe direkt in der Packliste abhaken. Ohne Einzelgeräte, Etiketten und Kamera.</span></span></label>
+<label class="card inventory-mode"><input type="radio" name="mode" value="qr" {% if current_organization.inventory_qr_enabled %}checked{% endif %}><span><strong>Einzelgeräte &amp; QR-Codes</strong><span class="muted">Geräte mit Inventarnummern erfassen, reservieren und per Kamera ausgeben oder zurücknehmen. Mit Etiketten und Abbaukontrolle.</span></span></label>
+</div>
+<p class="field__help">Vorhandenes Material und die Gerätehistorie bleiben beim Wechsel erhalten. Vor dem Wechsel zur klassischen Liste müssen offene Geräteausgaben zurückgegeben und aktive Reservierungen aufgehoben werden.</p>
+<div class="form-actions"><a class="button button--secondary" href="{% url 'inventory:list' %}">Zum Material</a><button class="button button--primary">Modus speichern</button></div>
+</form>
+{% include "inventory/includes/tracking_help.html" %}
+</article>
+{% endblock %}

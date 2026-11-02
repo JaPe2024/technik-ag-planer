@@ -1,5 +1,6 @@
 (() => {
   const form = document.getElementById('scan-form');
+  if (!form) return;
   const button = document.getElementById('camera');
   const preview = document.getElementById('preview');
   const status = document.getElementById('scan-status');

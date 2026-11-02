@@ -1,20 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Einzelgeräte – {{ material.name }}{% endblock %}
+{% block topbar_title %}Material{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'css/inventory-units.css' %}">{% endblock %}
 {% block content %}
-<article class="stack">
-<header class="page-header"><h1>Einzelgeräte – {{ material.name }}</h1><a href="{% url 'inventory:detail' material.pk %}">Zurück zum Material</a></header>
-{% if org_perms.MANAGE_INVENTORY and not material.is_archived %}
-<form method="post" action="{% url 'inventory:unit_create' material.pk %}" class="card stack">{% csrf_token %}<label>Inventarcode (leer für automatisch erzeugten Code)<input name="code" maxlength="100" pattern="[A-Za-z0-9][A-Za-z0-9_-]{1,99}"></label><button class="button">Einzelgerät anlegen</button></form>{% endif %}
-<p>Etiketten über die Druckfunktion des Browsers drucken. Bereits vorhandene Bestandsmengen bleiben erhalten.</p>
-{% for unit in units %}<section class="card stack"><h2>{{ unit.code }}{% if unit.archived_at %} · archiviert{% endif %}</h2>
-<div class="unit-label"><strong>{{ material.name }}</strong><p>{{ unit.code }}</p><img width="160" height="160" src="{% url 'inventory:unit_qr' unit.pk %}" alt="QR-Code {{ unit.code }}"></div>
-{% if org_perms.MANAGE_INVENTORY %}<form method="post" action="{% url 'inventory:unit_action' unit.pk %}">{% csrf_token %}{% if unit.archived_at %}<button name="operation" value="restore">Wieder aktivieren</button>{% else %}<button name="operation" value="archive">Archivieren</button>{% endif %}<button name="operation" value="delete">Ohne Historie löschen</button></form>{% endif %}
-{% if org_perms.REPORT_DEFECT %}<form method="post" action="{% url 'inventory:unit_defect' unit.pk %}" class="stack">{% csrf_token %}<label>Defektbeschreibung<input name="description" minlength="5" maxlength="300" required></label><button>Defekt melden</button></form>{% endif %}
-{% for defect in unit.defects.all %}<div><p>{{ defect.get_status_display }} · {{ defect.description }} · {{ defect.reported_at }}{% if defect.resolution %} · {{ defect.resolution }}{% endif %}</p>
-{% if org_perms.MANAGE_INVENTORY %}<form method="post" action="{% url 'inventory:unit_defect_status' defect.pk %}">{% csrf_token %}<select name="status" aria-label="Defektstatus">{% for value, label in statuses.choices %}<option value="{{ value }}"{% if value == defect.status %} selected{% endif %}>{{ label }}</option>{% endfor %}</select><input name="resolution" maxlength="2000" placeholder="Reparaturvermerk (mind. 5 Zeichen)" aria-label="Reparaturvermerk"><button>Status speichern</button></form>{% endif %}</div>{% endfor %}
-<details><summary>Ausgabehistorie</summary>{% for issue in unit.issues.all %}<p>{{ issue.production }} · {{ issue.issued_at }} · {% if issue.returned_at %}zurück {{ issue.returned_at }}{% else %}noch ausgegeben{% endif %}</p>{% empty %}<p>Noch keine Ausgabe.</p>{% endfor %}</details>
-</section>{% empty %}<p>Noch keine Einzelgeräte.</p>{% endfor %}
-</article>
-{% endblock %}
+<article class="stack inventory-workspace">
+<header class="page-header"><p class="eyebrow"><a href="{% url 'inventory:detail' material.pk %}">← {{ material.name }}</a> · QR-Verwaltung</p><h1 class="page-title">Einzelgeräte</h1><p class="muted">Jedes Gerät erhält einen eigenen Inventarcode. So bleiben Reservierungen, Defekte und Rückgaben nachvollziehbar.</p></header>
+{% include "inventory/includes/device_list.html" %}
+</article>{% endblock %}

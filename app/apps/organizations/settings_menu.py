@@ -39,6 +39,12 @@ GROUPS = [
         "Planung",
         [
             Entry(
+                "Materialverwaltung",
+                "Klassisch abhaken oder Einzelgeräte mit QR-Codes verwalten",
+                "inventory:settings",
+                perm=Perm.MANAGE_INVENTORY,
+            ),
+            Entry(
                 "Kategorien",
                 "Produktions-Kategorien verwalten und sortieren",
                 "productions:categories",

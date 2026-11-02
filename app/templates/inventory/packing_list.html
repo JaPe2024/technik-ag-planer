@@ -5,8 +5,8 @@
 <article class="stack">
   <header class="page-header">
     <p class="eyebrow"><a href="{% url 'productions:detail' production.pk %}">← {{ production.name }}</a></p>
-    <h1 class="page-title">Packliste</h1><a class="button" href="{% url 'inventory:scan' production.pk %}">Einzelgeräte scannen</a>
-    <p class="muted">Zum Abhaken bei Ausgabe und Rückgabe – freiwillig, nichts muss abgehakt werden.</p>
+    <h1 class="page-title">Packliste</h1>{% if current_organization.inventory_qr_enabled and org_perms.MANAGE_PRODUCTIONS %}<a class="button" href="{% url 'inventory:scan' production.pk %}">Einzelgeräte scannen</a>{% endif %}
+    {% if current_organization.inventory_qr_enabled %}<p class="muted">Einzelgeräte reservieren und Ausgabe oder Rückgabe per QR-Code erfassen.</p>{% else %}<p class="muted">Zum Abhaken bei Ausgabe und Rückgabe – freiwillig, nichts muss abgehakt werden.</p>{% endif %}
     {% if planned %}<div class="toolbar"><a class="button button--secondary button--small" href="{% url 'documents:packing_list' production.pk %}">Als PDF</a></div>{% endif %}
   </header>
   {% if planned %}
@@ -17,7 +17,7 @@
             <span class="list__title">{{ p.material }} × {{ p.quantity }}</span>
             {% if p.material.category %}<span class="list__subtitle">{{ p.material.category }}</span>{% endif %}
           </div>
-          <form method="post" action="{% url 'inventory:packing_toggle' p.pk %}" class="pack__checks">
+          {% if not current_organization.inventory_qr_enabled %}<form method="post" action="{% url 'inventory:packing_toggle' p.pk %}" class="pack__checks">
             {% csrf_token %}
             <button type="submit" name="spalte" value="ausgabe" class="pack__check" aria-pressed="{{ p.issued_at|yesno:'true,false' }}">
               <span class="todo__check{% if p.issued_at %} todo__check--done{% endif %}" aria-hidden="true"></span> Ausgabe
@@ -25,7 +25,7 @@
             <button type="submit" name="spalte" value="rueckgabe" class="pack__check" aria-pressed="{{ p.returned_at|yesno:'true,false' }}">
               <span class="todo__check{% if p.returned_at %} todo__check--done{% endif %}" aria-hidden="true"></span> Rückgabe
             </button>
-          </form>
+          </form>{% endif %}
         </li>
       {% endfor %}
     </ul>

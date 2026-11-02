@@ -309,6 +309,17 @@ Das Material-Modul verwaltet die Technik der AG mit Kategorien, Bestand und Plan
 - Konfliktwarnung und Packliste behandeln Material aus einem Satz wie einzeln geplantes Material
 - Sätze bearbeiten, kopieren und löschen; Änderungen an einem Satz gelten nur für künftige Planungen, bereits geplante Produktionen bleiben unverändert
 
+### Erweiterung: Materialmodi, Einzelgeräte und Mengenbewegungen (M13)
+
+- Pro AG exklusiv klassische Mengenliste mit Abhaken oder QR-Verwaltung; Standard bleibt klassisch. Wechsel in Einstellungen → Materialverwaltung, mit Schutz für offene Ausgaben, Rückgaben, Reservierungen und persönliche Ausleihen.
+- Im QR-Modus pro Materialart: `bulk` (Mengenmaterial), `individual` (Einzelgeräte) oder `consumable` (Verbrauchsmaterial). Kabel werden nach Stückzahl geführt; besondere Kabel können bewusst Einzelgeräte sein.
+- Einzelgeräte mit Inventarcodes, Etiketten, aufklappbarer Geräteliste direkt am Material, Archiv und Historie. Konkrete Reservierungen nur im Materialabschnitt der Produktion, bis zur geplanten Menge und ohne zeitlichen Konflikt.
+- Gemeinsame Materialausgabe: Kamerascan/Code für Einzelgeräte, Stückzahl und Teilrückgaben für Mengenmaterial, Bestandsentnahme ohne Rückgabe für Verbrauchsmaterial. Kamera benötigt HTTPS/localhost; Scannerbibliothek wird lokal ausgeliefert.
+- Gerätespezifische Defekte und Reparaturvermerke ergänzen vorhandene Defektmeldungen.
+- Abbau mit dokumentierten Ausnahmen für Einzelgeräte, Sperre ungeklärter Mengenrückgaben und druckbarem Protokoll. Vermisste Geräte bleiben gesperrt; spätere Rückgabe bleibt möglich.
+- Persönliche Ausleihen im klassischen Modus mit Berücksichtigung im verfügbaren Bestand.
+- Modus, Modelle und Migrationen: [ADR 0020](architektur/0020-material-einzelgeraete.md). Vollständiger Umfang und noch offene Übernahmeprüfungen: [Entwicklerübergabe](entwicklung/materialerweiterung.md). Bedienung: [Material-Handbuch](handbuch/material-scans.md).
+
 ## 8. Board
 
 Das Board ist ein gemeinsamer Chat für die ganze AG, ergänzt um automatische Systemmeldungen.
@@ -555,6 +566,7 @@ Im Hauptverzeichnis liegt eine kurze `CLAUDE.md`, die Claude Code bei jeder Sitz
 | 10 | Google-Anbindung | OAuth-Verbindung, Drive-Ablage, Kalender-Übertragung, Anleitung für das Google-Cloud-Projekt (2, 9) |
 | 11 | PWA und Push | Web-App-Manifest, Service Worker, Web Push, Erinnerungen, Benachrichtigungs-Einstellungen (1, 9) |
 | 12 | Abschluss | Einstellungen vollständig, Hilfe & FAQ, Landingpage, Installations- und Betriebsdoku, Sicherheits-Review (10, 12, 14) |
+| 13 | Materialerweiterung im Fork | Optionaler QR-Modus, Einzelgeräte, Reservierungen, Mengen-/Verbrauchsausgabe, Defekte, Ausleihen und Abbau (7, 10) |
 
 **Hinweise zu den schwierigen Teilen**
 
@@ -583,6 +595,7 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | 10 | Google-Anbindung | fertig (echter Test mit Google-Konto steht aus) | #12 |
 | 11 | PWA und Push | fertig (Test auf echten Handys steht aus) | #13 |
 | 12 | Abschluss | fertig | #14 |
+| 13 | Materialerweiterung im Fork | im Fork implementiert; Übernahmeprüfung, vollständige Regression und Hardwareabnahme offen | noch kein Upstream-PR |
 | – | Wartung 1: Termin-Erinnerungen, Einladungen aufräumen | fertig | #15 |
 | – | Betreiber-Konten von AGs trennen | fertig | #17 |
 | – | Technik-Auswahl im Anfrage-Formular je AG | fertig | #18 |
@@ -652,9 +665,17 @@ Dieser Abschnitt wird nach jedem Meilenstein fortgeschrieben (Schritt 6 im Ablau
 | Entwicklung | Beispielkonten `owner@example.org`, `lehrer@…`, `schueler@…` …, Passwort jeweils der Name vor dem @ (M6–M11 mit Login ohne @; seit M12 wieder E-Mail-Eingabe) | Schneller durchklicken (Entscheidung des Projektinhabers) | README |
 | Repository | Kein `CONTRIBUTING.md` und kein `SECURITY.md`: Die Zustimmung zur Lizenz steht in der Pull-Request-Vorlage, Sicherheitslücken werden privat über GitHub gemeldet | Entscheidung des Projektinhabers, weniger Dateien | Abschnitt 13 |
 
+### Meilenstein 13 – Übergabestand des Forks
+
+Umfang: [Entwicklerübergabe](entwicklung/materialerweiterung.md); Architekturentscheidung: [ADR 0020](architektur/0020-material-einzelgeraete.md). Die ursprünglichen zwölf Meilensteine behalten ihren historischen Abschlussstand. M13 ist noch nicht als im Originalprojekt abgenommen oder veröffentlicht markiert.
+
+Nachgewiesene Teilprüfungen: 438 Tests gegen PostgreSQL in einem größeren Lauf; nach Oberflächenänderungen 280 Material-/Sicherheitstests gegen PostgreSQL; letzte Gerätelisten-Einbettung mit 25 gezielten SQLite-Tests (zwei PostgreSQL-Paralleltests übersprungen). Keine vollständige aktuelle Gesamtregression und keine Kamera-/Designabnahme.
+
+Audit und AG-Export: Registrierung aller sieben neuen Modelle und Export des QR-Modus nachgezogen, mit gezieltem Test. Vor Übernahme offen: Lösch-/Aufräumpfade und `PROTECT`-Beziehungen prüfen; Migration mit Altbeständen testen; vollständige Tests/Lint/CI und Review; reale HTTPS-Kameratests und Druckabnahme. Mengenverluste beim Abbau und Wiederöffnung eines abgeschlossenen Abbaus werden bislang nicht unterstützt. Details stehen in der Entwicklerübergabe.
+
 **Vor dem Start**
 
-Alle Meilensteine sind umgesetzt. Vor dem Einsatz an der Schule stehen noch aus:
+Die ursprünglichen Meilensteine 1–12 sind umgesetzt; für die Fork-Erweiterung M13 gelten zusätzlich die offenen Prüfungen oben. Vor dem Einsatz an der Schule stehen noch aus:
 
 - Echter Durchlauf der Google-Anbindung mit einem Google-Cloud-Projekt und einem Google-Konto der AG (`docs/installation/google-cloud.md`); bisher nur gegen eine Attrappe getestet
 - Test auf echten Handys über HTTPS (Android und iPhone mit App vom Home-Bildschirm): Installation, Icon und Vollbild, Push aktivieren, Test-Mitteilung, Crew-Anfrage; App-Icon auswählen (`docs/design/app-icon/`)

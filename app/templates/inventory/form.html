@@ -11,6 +11,7 @@
     {% include "includes/field.html" with field=form.category %}
     {% if org_perms.MANAGE_CATEGORIES_AND_INQUIRY_LINK %}<a class="field__help" href="{% url 'inventory:categories' %}">Kategorien bearbeiten</a>{% endif %}
     {% include "includes/field.html" with field=form.quantity %}
+    {% if form.tracking %}{% include "includes/field.html" with field=form.tracking %}{% include "inventory/includes/tracking_help.html" %}{% endif %}
     {% include "includes/field.html" with field=form.notes %}
 
     <fieldset class="jobs-fieldset">

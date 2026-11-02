@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load static %}
+{% block head %}{% if current_organization.inventory_qr_enabled %}<link rel="stylesheet" href="{% static 'css/inventory-units.css' %}">{% endif %}{% endblock %}
 {% block title %}{{ production.name }} – Technik-AG Planer{% endblock %}
 {% block topbar_title %}Produktion{% endblock %}
 {% block content %}
@@ -114,7 +116,7 @@
     <div class="section-head">
       <h2 class="section-title">Material</h2>
       <div class="list__actions">
-        {% if planned_material %}<a class="button button--secondary button--small" href="{% url 'inventory:packing_list' production.pk %}">Packliste</a>{% endif %}
+        {% if planned_material %}<a class="button button--secondary button--small" href="{% url 'inventory:packing_list' production.pk %}">{% if current_organization.inventory_qr_enabled %}Ausgabe &amp; Rückgabe{% else %}Packliste{% endif %}</a>{% endif %}
         {% if org_perms.MANAGE_PRODUCTIONS %}
           <a class="button button--secondary button--small" href="{% url 'inventory:plan_kit' production.pk %}" data-sheet-url>+ Materialsatz</a>
           <a class="button button--secondary button--small" href="{% url 'inventory:plan' production.pk %}" data-sheet-url>+ Material</a>
@@ -128,6 +130,10 @@
             <span class="dot" aria-hidden="true"></span>
             <div class="list__main">
               <a class="list__link list__title" href="{% url 'inventory:detail' p.material_id %}">{{ p.material }} × {{ p.quantity }}</a>
+              {% if current_organization.inventory_qr_enabled and p.material.tracking != "individual" %}<span class="list__subtitle">{{ p.material.get_tracking_display }}</span>{% endif %}
+              {% if current_organization.inventory_qr_enabled and p.material.tracking == "individual" %}
+                {% include "inventory/includes/production_reservations.html" %}
+              {% endif %}
               {% if p.source_kit or p.shortage %}
                 <span class="list__subtitle">{% if p.source_kit %}aus Satz „{{ p.source_kit }}“{% endif %}{% if p.source_kit and p.shortage %} · {% endif %}{% if p.shortage %}<span class="text-danger">{{ p.shortage.needed }} benötigt, {{ p.shortage.available }} verfügbar</span>{% endif %}</span>
               {% endif %}

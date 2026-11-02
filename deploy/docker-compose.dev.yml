@@ -46,7 +46,7 @@ services:
       POSTGRES_USER: technik_ag_planer
       POSTGRES_PASSWORD: technik_ag_planer
     ports:
-      - "5432:5432"
+      - "${POSTGRES_DEV_PORT:-5433}:5432"
     volumes:
       - pgdata-dev:/var/lib/postgresql/data
     healthcheck:

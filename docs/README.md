@@ -11,6 +11,11 @@
 | [sicherheit/](sicherheit/review-2026-10.md) | Sicherheits-Review vor dem Start |
 | [design/app-icon/](design/app-icon/) | Entwürfe für das App-Icon |
 
+## Erweiterungen im Fork
+
+- [Materialerweiterung – Entwicklerübergabe](entwicklung/materialerweiterung.md): Funktionsumfang, Modelle, Migrationen, Teststand und offene Übernahmeprüfungen zu Meilenstein 13.
+- [Material und Scans – Bedienungsanleitung](handbuch/material-scans.md).
+
 ## Architektur-Entscheidungen
 
 | Nr. | Titel |
@@ -30,5 +35,10 @@
 | [0013](architektur/0013-pwa-und-push.md) | PWA und Push-Mitteilungen |
 | [0014](architektur/0014-abschluss.md) | Landingpage, Rechtstexte, CSP, Sicherheits-Test, Backups |
 | [0015](architektur/0015-erinnerungen-und-einladungen.md) | Erinnerungen vor Terminen, Einladungen aufräumen |
+| [0016](architektur/0016-betrieb-hinter-reverse-proxy.md) | Betrieb hinter Reverse Proxy |
+| [0017](architektur/0017-betreiber-konten-trennen.md) | Betreiber-Konten trennen |
+| [0018](architektur/0018-technik-auswahl.md) | Technik-Auswahl je AG |
+| [0019](architektur/0019-kalender-produktion-einmal.md) | Kalender: Produktion einmal anzeigen |
+| [0020](architektur/0020-material-einzelgeraete.md) | Optionaler QR-Modus und gemischte Materialverwaltung (Fork, zur Übernahmeprüfung) |
 
 Neue Entscheidungen bekommen die nächste Nummer und einen Eintrag in Abschnitt 16 der Feature-Liste.

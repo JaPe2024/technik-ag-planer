@@ -11,6 +11,7 @@ from apps.core.decorators import landing_for_anonymous
 from apps.google_sync.services import connection_for
 from apps.inquiries.models import Inquiry
 from apps.inventory import services as inventory_services
+from apps.inventory.models import MaterialUnit, ProductionTeardown, UnitReservation
 from apps.organizations.decorators import org_required, permission_required_in_org
 from apps.organizations.models import Membership
 from apps.organizations.permissions import Perm
@@ -185,6 +186,55 @@ def production_detail(request, pk):
         services.with_jobs_and_crew(Production.objects.for_org(request.organization)), pk=pk
     )
     supervisors = list(production.supervisors.all())
+    planned_material = inventory_services.production_material(production)
+    teardown_complete = False
+    if request.organization.inventory_qr_enabled:
+        assigned = list(
+            UnitReservation.objects.for_org(request.organization)
+            .filter(production=production, released_at__isnull=True)
+            .select_related("unit")
+        )
+        reserved_ids = [reservation.unit_id for reservation in assigned]
+        candidates = list(
+            MaterialUnit.objects.for_org(request.organization)
+            .filter(
+                material_id__in=[p.material_id for p in planned_material],
+                archived_at__isnull=True,
+                material__archived_at__isnull=True,
+            )
+            .exclude(pk__in=reserved_ids)
+            .prefetch_related("defects", "issues", "reservations__production", "material__defects")
+        )
+        for unit in candidates:
+            unit.unavailable_reason = ""
+            if any(d.status in ("defect", "in_repair") for d in unit.defects.all()):
+                unit.unavailable_reason = "Defekt / in Reparatur"
+            elif any(
+                d.unit_id is None and d.status in ("defect", "in_repair")
+                for d in unit.material.defects.all()
+            ):
+                unit.unavailable_reason = "Materialart wegen Defekt gesperrt"
+            elif any(i.returned_at is None for i in unit.issues.all()):
+                unit.unavailable_reason = "Noch ausgegeben"
+            elif any(
+                r.released_at is None
+                and r.production.deleted_at is None
+                and r.production.start_date <= production.end_date
+                and r.production.end_date >= production.start_date
+                for r in unit.reservations.all()
+            ):
+                unit.unavailable_reason = "Im Produktionszeitraum bereits reserviert"
+        for planned in planned_material:
+            planned.unit_reservations = [
+                r for r in assigned if r.unit.material_id == planned.material_id
+            ]
+            planned.unit_choices = [u for u in candidates if u.material_id == planned.material_id]
+            planned.has_available_units = any(
+                not u.unavailable_reason for u in planned.unit_choices
+            )
+        teardown_complete = ProductionTeardown.objects.filter(
+            production=production, completed_at__isnull=False
+        ).exists()
     return render(
         request,
         "productions/detail.html",
@@ -195,7 +245,8 @@ def production_detail(request, pk):
                 organization=request.organization, initial={"status": production.status_id}
             ),
             "todo_form": TodoForm(),
-            "planned_material": inventory_services.production_material(production),
+            "planned_material": planned_material,
+            "teardown_complete": teardown_complete,
             "supervisors": supervisors,
             "is_supervisor": request.membership in supervisors,
             "links": production.links.all(),

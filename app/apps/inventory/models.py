@@ -49,6 +49,14 @@ class MaterialQuerySet(OrganizationQuerySet):
 
 
 class Material(OrganizationScopedModel):
+    class Tracking(models.TextChoices):
+        BULK = "bulk", "Mengenmaterial (z. B. Kabel)"
+        INDIVIDUAL = "individual", "Einzelgeräte mit QR-Code"
+        CONSUMABLE = "consumable", "Verbrauchsmaterial (ohne Rückgabe)"
+
+    tracking = models.CharField(
+        "Verwaltung", max_length=12, choices=Tracking.choices, default=Tracking.BULK
+    )
     name = models.CharField("Name", max_length=120, help_text="z. B. Lichtpult")
     category = models.ForeignKey(
         MaterialCategory,
@@ -215,6 +223,13 @@ class PlannedMaterial(OrganizationScopedModel):
         Material, verbose_name="Material", on_delete=models.CASCADE, related_name="plannings"
     )
     quantity = models.PositiveIntegerField("Menge", default=1)
+    issued_quantity = models.PositiveIntegerField(default=0)
+    returned_quantity = models.PositiveIntegerField(default=0)
+
+    @property
+    def outstanding_quantity(self):
+        return self.issued_quantity - self.returned_quantity
+
     # Nur zur Anzeige („aus Satz …“); Änderungen am Satz wirken nicht zurück
     source_kit = models.ForeignKey(
         Kit,
@@ -336,4 +351,21 @@ class MaterialCheckout(OrganizationScopedModel):
     class Meta:
         constraints = [
             models.CheckConstraint(condition=Q(quantity__gte=1), name="checkout_quantity_min_1")
+        ]
+
+
+class QuantityMovement(OrganizationScopedModel):
+    planned = models.ForeignKey(PlannedMaterial, on_delete=models.PROTECT, related_name="movements")
+    operation = models.CharField(
+        max_length=6, choices=[("issue", "Ausgabe"), ("return", "Rückgabe")]
+    )
+    quantity = models.PositiveIntegerField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=Q(quantity__gte=1), name="movement_quantity_min_1")
         ]

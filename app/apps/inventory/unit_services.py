@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
+from apps.organizations.models import Organization
 from apps.productions.models import Production
 
 from .models import (
@@ -32,13 +33,21 @@ def normalize_code(raw):
     return code
 
 
+def lock_mode(organization, *, qr=True):
+    org = Organization.objects.select_for_update().get(pk=organization.pk)
+    if org.inventory_qr_enabled != qr:
+        raise ValidationError("Der Materialmodus wurde geändert. Bitte die Seite neu laden.")
+
+
 def lock_production(production):
+    lock_mode(production.organization)
     return Production.objects.select_for_update().get(
         pk=production.pk, organization=production.organization
     )
 
 
 def lock_unit(unit):
+    lock_mode(unit.organization)
     Material.objects.select_for_update().get(pk=unit.material_id)
     return MaterialUnit.objects.select_for_update().select_related("material").get(pk=unit.pk)
 
@@ -53,6 +62,8 @@ def check_open(production):
 
 
 def check_available(unit):
+    if unit.material.tracking != Material.Tracking.INDIVIDUAL:
+        raise ValidationError("Dieses Material wird über Mengen statt Einzelgeräte verwaltet.")
     if unit.archived_at or unit.material.is_archived:
         raise ValidationError("Gerät oder Material ist archiviert.")
     if unit.defects.filter(status__in=DefectReport.OPEN).exists():
@@ -106,9 +117,10 @@ def cancel(reservation):
         production=reservation.production, unit=reservation.unit, returned_at__isnull=True
     ).exists():
         raise ValidationError("Gerät vor dem Aufheben der Reservierung zurückgeben.")
-    UnitReservation.objects.filter(pk=reservation.pk, released_at__isnull=True).update(
-        released_at=timezone.now()
-    )
+    reservation.refresh_from_db()
+    if reservation.released_at is None:
+        reservation.released_at = timezone.now()
+        reservation.save(update_fields=["released_at"])
 
 
 @transaction.atomic
@@ -254,15 +266,25 @@ def teardown(production, operation, user, *, issue_id=None, reason="", note=""):
             created_by=user,
         )
     elif operation == "complete":
+        from django.db.models import F
+
+        if PlannedMaterial.objects.filter(
+            production=production,
+            material__tracking="bulk",
+            issued_quantity__gt=F("returned_quantity"),
+        ).exists():
+            raise ValidationError("Es sind noch Rückgaben von Mengenmaterial offen.")
         if UnitIssue.objects.filter(
             production=production, returned_at__isnull=True, exception__isnull=True
         ).exists():
             raise ValidationError("Es sind noch Rückgaben ungeklärt.")
         state.completed_at, state.completed_by = timezone.now(), user
         state.save(update_fields=["completed_at", "completed_by"])
-        UnitReservation.objects.filter(production=production, released_at__isnull=True).update(
-            released_at=state.completed_at
-        )
+        for reservation in UnitReservation.objects.filter(
+            production=production, released_at__isnull=True
+        ):
+            reservation.released_at = state.completed_at
+            reservation.save(update_fields=["released_at"])
     else:
         raise ValidationError("Ungültiger Abbauvorgang.")
 
@@ -272,13 +294,10 @@ def checkout(material, quantity, user):
     from .models import MaterialCheckout
     from .services import available
 
+    lock_mode(material.organization, qr=False)
     material = Material.objects.select_for_update().get(pk=material.pk)
     if material.is_archived or not 1 <= quantity <= 10000:
         raise ValidationError("Material archiviert oder ungültige Menge (1–10000).")
-    if material.units.filter(archived_at__isnull=True).exists():
-        raise ValidationError(
-            "Material mit Einzelgeräten bitte über Produktionsreservierung und QR-Scan ausgeben."
-        )
     stock = available(material)
     if material.defects.filter(status__in=DefectReport.OPEN).exists():
         raise ValidationError("Für dieses Material ist ein Defekt offen.")
@@ -296,6 +315,58 @@ def checkin(loan, user, can_manage):
     Material.objects.select_for_update().get(pk=loan.material_id)
     if loan.user_id != user.pk and not can_manage:
         raise ValidationError("Nur eigene Ausleihen können zurückgegeben werden.")
-    MaterialCheckout.objects.filter(pk=loan.pk, returned_at__isnull=True).update(
-        returned_at=timezone.now()
+    loan = MaterialCheckout.objects.get(pk=loan.pk)
+    if loan.returned_at is None:
+        loan.returned_at = timezone.now()
+        loan.save(update_fields=["returned_at"])
+
+
+@transaction.atomic
+def move_quantity(planned, operation, quantity, user):
+    from django.db.models import Sum
+
+    from .models import QuantityMovement
+    from .services import available
+
+    production = lock_production(planned.production)
+    material = Material.objects.select_for_update().get(pk=planned.material_id)
+    planned = PlannedMaterial.objects.select_for_update().get(pk=planned.pk)
+    if material.tracking == Material.Tracking.INDIVIDUAL or quantity < 1 or quantity > 10000:
+        raise ValidationError("Ungültige Menge oder Material mit Einzelgeräten.")
+    if operation == "issue":
+        check_open(production)
+        if material.is_archived or quantity > planned.quantity - planned.issued_quantity:
+            raise ValidationError("Die Ausgabe überschreitet die noch geplante Menge.")
+        stock = available(material)
+        if material.tracking == Material.Tracking.BULK:
+            outside = PlannedMaterial.objects.filter(material=material).aggregate(
+                issued=Sum("issued_quantity"), returned=Sum("returned_quantity")
+            )
+            outstanding = (outside["issued"] or 0) - (outside["returned"] or 0)
+            if stock is not None:
+                stock -= outstanding
+        if stock is not None and quantity > stock:
+            raise ValidationError("Nicht genügend Material verfügbar.")
+        planned.issued_quantity += quantity
+        planned.issued_at = timezone.now()
+        if material.tracking == Material.Tracking.CONSUMABLE and material.quantity is not None:
+            material.quantity -= quantity
+            material.save(update_fields=["quantity", "updated_at"])
+    elif operation == "return":
+        if material.tracking == Material.Tracking.CONSUMABLE:
+            raise ValidationError("Verbrauchsmaterial benötigt keine Rückgabe.")
+        if quantity > planned.outstanding_quantity:
+            raise ValidationError("Die Rückgabe überschreitet die ausgegebene Menge.")
+        planned.returned_quantity += quantity
+        if planned.outstanding_quantity == 0:
+            planned.returned_at = timezone.now()
+    else:
+        raise ValidationError("Ungültiger Vorgang.")
+    planned.save(update_fields=["issued_quantity", "returned_quantity", "issued_at", "returned_at"])
+    QuantityMovement.objects.create(
+        organization=production.organization,
+        planned=planned,
+        operation=operation,
+        quantity=quantity,
+        user=user,
     )

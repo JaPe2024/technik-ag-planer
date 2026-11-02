@@ -11,7 +11,7 @@ from .models import DefectReport, Kit, KitItem, Material, MaterialCategory, Mate
 class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material
-        fields = ["name", "category", "quantity", "notes"]
+        fields = ["name", "category", "quantity", "tracking", "notes"]
         widgets = {
             "name": forms.TextInput(attrs={"autofocus": True}),
             "quantity": forms.NumberInput(attrs={"min": 0, "placeholder": "beliebig"}),
@@ -20,6 +20,10 @@ class MaterialForm(forms.ModelForm):
 
     def __init__(self, *args, organization, **kwargs):
         super().__init__(*args, **kwargs)
+        if not organization.inventory_qr_enabled:
+            self.fields.pop("tracking")
+        else:
+            self.fields["tracking"].required = False
         categories = MaterialCategory.objects.for_org(organization)
         self.fields["category"].queryset = categories
         self.fields["category"].empty_label = "Keine"
@@ -27,6 +31,24 @@ class MaterialForm(forms.ModelForm):
             choices=self.fields["category"].choices,
             color_of={str(c.pk): c.color for c in categories},
         )
+
+    def clean_tracking(self):
+        value = (
+            self.cleaned_data.get("tracking") or self.instance.tracking or Material.Tracking.BULK
+        )
+        if (
+            self.instance.pk
+            and value != self.instance.tracking
+            and (
+                self.instance.units.exists()
+                or self.instance.plannings.filter(movements__isnull=False).exists()
+            )
+        ):
+            raise forms.ValidationError(
+                "Nach Geräteerfassung oder Ausgabe ist die Verwaltungsart festgelegt. "
+                "Bitte eine neue Materialart anlegen."
+            )
+        return value
 
 
 class MaterialLinkForm(forms.ModelForm):

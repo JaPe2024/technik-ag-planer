@@ -1,28 +1,40 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Material scannen – {{ production.name }}{% endblock %}
+{% block title %}Materialausgabe – {{ production.name }}{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'css/inventory-units.css' %}">{% endblock %}
 {% block content %}
-<article class="stack">
-<header class="page-header"><h1>Material scannen – {{ production.name }}</h1><a href="{% url 'inventory:packing_list' production.pk %}">Zur Packliste</a> · <a href="{% url 'inventory:teardown_protocol' production.pk %}">Abbauprotokoll / Drucken</a></header>
-<section id="reservation-state" class="card stack"><h2>Einzelgeräte reservieren</h2><p>Die Reservierung umfasst die Produktionstage {{ production.start_date }} bis {{ production.end_date }}. Zuerst die benötigte Menge in der Materialplanung eintragen.</p>
-{% if not teardown.completed_at %}<form method="post" action="{% url 'inventory:reserve_unit' production.pk %}">{% csrf_token %}<select name="unit_id" aria-label="Einzelgerät" required>{% for unit in available_units %}<option value="{{ unit.pk }}">{{ unit.material.name }} · {{ unit.code }}</option>{% endfor %}</select><button>Reservieren</button></form>{% endif %}
-{% for reservation in reservations %}<div>{{ reservation.unit.material.name }} · {{ reservation.unit.code }}<form method="post" action="{% url 'inventory:cancel_reservation' reservation.pk %}">{% csrf_token %}<button>Reservierung aufheben</button></form></div>{% empty %}<p>Keine aktiven Reservierungen.</p>{% endfor %}</section>
-<section class="card stack"><h2>Ausgabe und Rückgabe</h2>
-<form method="post" id="scan-form">{% csrf_token %}
-<label>Vorgang <select name="mode"><option value="issue">Ausgabe</option><option value="return">Rückgabe</option></select></label>
-<label>Inventarcode <input name="code" required maxlength="500" autofocus autocomplete="off"></label><button class="button">Erfassen</button>
-</form>
-<button type="button" id="camera">Kamera starten</button><div id="preview" hidden></div><p id="scan-status" role="status" aria-live="polite"></p>
-<p>Für die Kamera ist HTTPS oder localhost erforderlich. Alternativ Inventarcode eingeben oder einen USB-Scanner verwenden.</p>
+<article class="stack inventory-workspace">
+<header class="page-header"><p class="eyebrow">{{ production.name }}</p><h1 class="page-title">Materialausgabe</h1><a href="{% url 'productions:detail' production.pk %}">Zur Produktion</a> · <a href="{% url 'inventory:teardown_protocol' production.pk %}">Abbauprotokoll / Drucken</a></header>
+{% if teardown.completed_at %}<section class="card"><strong>Produktion abgeschlossen</strong><p class="muted">Der Abbau wurde am {{ teardown.completed_at }} abgeschlossen. Neue Ausgaben sind gesperrt; offene Rückgaben bleiben möglich.</p></section>{% endif %}
+{% include "inventory/includes/tracking_help.html" %}
+<section id="reservation-state" class="card stack">
+<h2 class="section-title">Material</h2>
+<p class="muted">Alles für diese Produktion: Einzelgeräte werden gescannt, Mengen nach Stückzahl erfasst.</p>
+{% if has_individual_plans %}
+<div class="stack"><h3 class="eyebrow">Einzelgeräte</h3>
+{% for reservation in reservations %}<div class="inventory-row-summary inventory-record"><span><strong>{{ reservation.unit.material.name }}</strong><span class="list__subtitle">{{ reservation.unit.code }}</span></span><span class="tag {% if reservation.issue_state == 'issued' %}tag--warning{% elif reservation.issue_state == 'returned' %}tag--success{% else %}tag--accent{% endif %}">{% if reservation.issue_state == 'issued' %}Ausgegeben{% elif reservation.issue_state == 'returned' %}Zurück{% else %}Reserviert{% endif %}</span></div>{% empty %}<p class="muted">Noch keine Einzelgeräte zugeordnet.</p>{% endfor %}
+</div>{% endif %}
+{% if quantity_plans %}{% include "inventory/includes/quantity_issue.html" %}{% endif %}
+<a href="{% url 'productions:detail' production.pk %}#material">Reservierungen in der Produktion verwalten →</a>
 </section>
-<section id="teardown-state" class="card stack"><h2>Abbaukontrolle</h2>
-{% if teardown.completed_at %}<p>Abgeschlossen am {{ teardown.completed_at }}. Spätere Rückgaben bleiben möglich.</p>{% elif teardown %}<p>Abbau aktiv seit {{ teardown.started_at }}.</p>{% else %}<form method="post" action="{% url 'inventory:teardown' production.pk %}">{% csrf_token %}<button name="operation" value="start">Abbau starten</button></form>{% endif %}
+{% if has_individual_plans %}
+<section class="card stack inventory-scanner"><p class="eyebrow">QR-Scanner</p><h2 class="section-title">Ausgabe und Rückgabe</h2>
+<form class="form" method="post" id="scan-form">{% csrf_token %}
+<fieldset class="inventory-mode-tabs"><legend class="visually-hidden">Scanmodus</legend><label><input type="radio" name="mode" value="issue" {% if not teardown.completed_at %}checked{% else %}disabled{% endif %}><span>Ausgabe</span></label><label><input type="radio" name="mode" value="return" {% if teardown.completed_at %}checked{% endif %}><span>Rückgabe</span></label></fieldset>
+<details><summary>Inventarcode manuell eingeben</summary><div class="inventory-manual-row"><label class="field"><span class="field__label">Inventarcode</span><input class="input" name="code" required maxlength="500" autocomplete="off" placeholder="z. B. MIC-01"></label><button class="button button--secondary">Erfassen</button></div></details>
+</form>
+<button class="button button--primary" type="button" id="camera">Kamera starten</button><div id="preview" hidden></div><p id="scan-status" role="status" aria-live="polite"></p>
+<p class="field__help">Etikett vor die Kamera halten. Der Scanner bleibt für weitere Geräte offen. Kamera benötigt HTTPS oder localhost.</p>
+</section>
+{% endif %}
+<section id="teardown-state" class="card stack"><div class="inventory-row-summary"><h2 class="section-title">Abbaukontrolle</h2><span class="tag {% if open_issue_count %}tag--warning{% else %}tag--success{% endif %}">{{ open_issue_count }} offene Geräterückgaben</span></div>
+<details><summary>Rückgaben prüfen und Abbau verwalten</summary><div class="stack">
+{% if teardown.completed_at %}<p>Abgeschlossen am {{ teardown.completed_at }}. Spätere Rückgaben bleiben möglich.</p>{% elif teardown %}<p>Abbau aktiv seit {{ teardown.started_at }}.</p>{% else %}<form class="form" method="post" action="{% url 'inventory:teardown' production.pk %}">{% csrf_token %}<button class="button button--secondary" name="operation" value="start">Abbau starten</button></form>{% endif %}
 {% for issue in issues %}<div><p>{{ issue.unit.code }} – {% if issue.returned_at %}zurückgegeben {{ issue.returned_at }}{% else %}ausgegeben {{ issue.issued_at }}{% endif %}</p>
 {% if issue.exception %}<p>Ausnahme: {{ issue.exception.get_reason_display }} · {{ issue.exception.note }}</p>{% elif not issue.returned_at and teardown and not teardown.completed_at %}
-<form method="post" action="{% url 'inventory:teardown' production.pk %}" class="stack">{% csrf_token %}<input type="hidden" name="operation" value="exception"><input type="hidden" name="issue_id" value="{{ issue.pk }}"><select name="reason" aria-label="Ausnahmegrund"><option value="missing">Vermisst</option><option value="damaged">Beschädigt</option><option value="other">Sonstiges</option></select><label>Bemerkung<textarea name="note" minlength="5" maxlength="2000" required></textarea></label><button>Ausnahme dokumentieren</button></form>{% endif %}</div>{% empty %}<p>Keine Ausgaben.</p>{% endfor %}
-{% if teardown and not teardown.completed_at %}<form method="post" action="{% url 'inventory:teardown' production.pk %}">{% csrf_token %}<button name="operation" value="complete">Abbau abschließen</button></form>{% endif %}
-</section></article>
+<details><summary>Ausnahme dokumentieren</summary><form class="form" method="post" action="{% url 'inventory:teardown' production.pk %}">{% csrf_token %}<input type="hidden" name="operation" value="exception"><input type="hidden" name="issue_id" value="{{ issue.pk }}"><select class="input" name="reason" aria-label="Ausnahmegrund"><option value="missing">Vermisst</option><option value="damaged">Beschädigt</option><option value="other">Sonstiges</option></select><label class="field">Bemerkung<textarea class="input" name="note" minlength="5" maxlength="2000" required></textarea></label><button class="button button--secondary">Ausnahme speichern</button></form></details>{% endif %}</div>{% empty %}<p>Keine Ausgaben.</p>{% endfor %}
+{% if teardown and not teardown.completed_at %}<form class="form" method="post" action="{% url 'inventory:teardown' production.pk %}">{% csrf_token %}<button class="button button--secondary" name="operation" value="complete">Abbau abschließen</button></form>{% endif %}
+</div></details></section></article>
 <script src="{% static 'vendor/html5-qrcode.min.js' %}" defer></script>
 <script src="{% static 'js/material-scanner.js' %}" defer></script>
 {% endblock %}

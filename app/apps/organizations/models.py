@@ -14,6 +14,7 @@ class Organization(models.Model):
     """Eine Technik-AG. Wird nur vom Betreiber im Django-Admin angelegt."""
 
     name = models.CharField("Name", max_length=120)
+    inventory_qr_enabled = models.BooleanField("Einzelgeräte und QR-Scans", default=False)
     is_active = models.BooleanField(
         "aktiv", default=True, help_text="Deaktivierte AGs sind für Mitglieder nicht erreichbar."
     )

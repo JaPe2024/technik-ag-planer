@@ -28,6 +28,13 @@ class InventoryConfig(AppConfig):
             "Kit",
             "KitItem",
             "PlannedMaterial",
+            "MaterialUnit",
+            "UnitIssue",
+            "UnitReservation",
+            "ProductionTeardown",
+            "TeardownException",
+            "MaterialCheckout",
+            "QuantityMovement",
         ]:
             model = self.get_model(name)
             audit(model)

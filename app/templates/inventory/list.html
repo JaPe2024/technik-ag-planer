@@ -10,6 +10,7 @@
   </header>
 
   <div class="stack">
+    <div class="toolbar"><span class="tag tag--accent">{% if current_organization.inventory_qr_enabled %}QR-Verwaltung{% else %}Klassische Liste{% endif %}</span>{% if org_perms.MANAGE_INVENTORY %}<a class="button button--secondary button--small" href="{% url 'inventory:settings' %}">Modus ändern</a>{% endif %}</div>
     {% include "inventory/includes/tabs.html" %}
 
     <form method="get" class="search" role="search">

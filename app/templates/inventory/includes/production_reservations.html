@@ -1,0 +1,22 @@
+﻿<details {% if p.unit_reservations|length < p.quantity %}open{% endif %}>
+  <summary class="field__help">Einzelgeräte · {{ p.unit_reservations|length }} von {{ p.quantity }} reserviert</summary>
+  <div class="stack">
+    {% for reservation in p.unit_reservations %}
+      <div class="toolbar"><strong>{{ reservation.unit.code }}</strong><span class="tag tag--success">Reserviert</span>
+        {% if org_perms.MANAGE_PRODUCTIONS and not teardown_complete %}<form method="post" action="{% url 'inventory:cancel_reservation' reservation.pk %}">{% csrf_token %}<button class="button button--secondary button--small">Reservierung aufheben</button></form>{% endif %}
+      </div>
+    {% empty %}<p class="muted">Noch kein Einzelgerät zugeordnet.</p>{% endfor %}
+    {% if teardown_complete %}<p class="field__help">Der Abbau ist abgeschlossen. Für diese Produktion können keine weiteren Geräte reserviert werden.</p>
+    {% elif org_perms.MANAGE_PRODUCTIONS %}
+      {% if p.unit_reservations|length < p.quantity %}
+        {% if p.unit_choices %}
+          {% if p.has_available_units %}<form method="post" action="{% url 'inventory:reserve_unit' production.pk %}" class="form">{% csrf_token %}
+            <fieldset class="inventory-choice-list"><legend class="field__label">Gerät auswählen · {{ p.material.name }}</legend>{% for unit in p.unit_choices %}<label class="inventory-choice"><input type="radio" name="unit_id" value="{{ unit.pk }}" required {% if unit.unavailable_reason %}disabled{% endif %}><strong>{{ unit.code }}</strong><span class="tag {% if not unit.unavailable_reason %}tag--success{% endif %}">{% if unit.unavailable_reason %}{{ unit.unavailable_reason }}{% else %}Verfügbar{% endif %}</span></label>{% endfor %}</fieldset>
+            <div class="form-actions"><button class="button button--primary button--small">Gerät reservieren</button></div>
+          </form>{% else %}<p class="field__help">Für diesen Zeitraum ist kein weiteres Gerät verfügbar.</p>{% endif %}
+          {% for unit in p.unit_choices %}{% if unit.unavailable_reason %}<p class="field__help">{{ unit.code }}: {{ unit.unavailable_reason }}</p>{% endif %}{% endfor %}
+        {% else %}<p class="field__help">Zuerst Einzelgeräte für diese Materialart anlegen. <a href="{% url 'inventory:units' p.material_id %}">Zur Geräteverwaltung</a></p>{% endif %}
+      {% else %}<p class="field__help">Alle geplanten Geräte sind reserviert. Für weitere Geräte zuerst die geplante Menge erhöhen.</p>{% endif %}
+    {% else %}<p class="field__help">Reservierungen werden von der Produktionsleitung verwaltet.</p>{% endif %}
+  </div>
+</details>

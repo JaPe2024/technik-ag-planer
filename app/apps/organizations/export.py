@@ -41,6 +41,7 @@ def export_organization(organization) -> bytes:
             "name": organization.name,
             "is_active": organization.is_active,
             "require_2fa": organization.require_2fa,
+            "inventory_qr_enabled": organization.inventory_qr_enabled,
             "created_at": organization.created_at,
             "exportiert_am": timezone.now(),
         },

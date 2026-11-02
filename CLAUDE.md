@@ -2,7 +2,7 @@
 
 Spezifikation: `docs/feature-liste.md` (nicht hier kopieren). Ablauf und Meilensteine: Abschnitt 15, Umsetzungsstand und Entscheidungen: Abschnitt 16 (nach jedem Meilenstein fortschreiben).
 
-**Stand: Alle 12 Meilensteine umgesetzt – Wartung und Ideen aus Abschnitt 16 („Vor dem Start“, „Ideen für später“).** Weiter mit Branch, Plan, PR wie bisher; neue Entscheidungen als ADR ab 0020.
+**Stand: Alle 12 Meilensteine umgesetzt – Wartung und Ideen aus Abschnitt 16 („Vor dem Start“, „Ideen für später“).** Weiter mit Branch, Plan, PR wie bisher; Materialerweiterung M13 ist im Fork implementiert; Übernahmeprüfungen sind offen (Abschnitt 16 und `docs/entwicklung/materialerweiterung.md`). ADR 0020 beschreibt diese Erweiterung; neue Entscheidungen ab 0021.
 
 ## Regeln
 
@@ -50,7 +50,7 @@ Spezifikation: `docs/feature-liste.md` (nicht hier kopieren). Ablauf und Meilens
 | `scheduling` | Kalender, Termine und Serien, „Nicht verfügbar“, Stundenraster, ICS | 0006, 0019 |
 | `board` | Board, Produktions-Chats, Systemmeldungen (Signale), Lesestand | 0007 |
 | `inquiries` | Technik-Anfragen: öffentlicher Link, Formular, Technik-Auswahl je AG, Spam-Schutz, geteilte Ansicht Anfrage/Produktion | 0009, 0018 |
-| `inventory` | Material, Material-Kategorien, Defekte, Materialsätze, Planung je Produktion (Spitzenbedarf), Packliste | 0008 |
+| `inventory` | Material, Kategorien, Defekte, Materialsätze, Planung und Packliste; im Fork zusätzlich optionaler QR-Modus, Einzelgeräte, Reservierungen, Mengenbewegungen und Abbau | 0008, 0020 |
 | `google_sync` | Google-Konto der AG (OAuth, Token verschlüsselt), Drive-Ablage (`Attachment`), Kalender-Übertragung (Gesamtvergleich), Anleitung `docs/installation/google-cloud.md` | 0012 |
 | `notifications` | Web Push (VAPID), Geräte, Benachrichtigungs-Einstellungen, Erinnerungen, Manifest und Service Worker (`/sw.js`), App-Icon (`scripts/app_icon.py`) | 0013 |
 | `documents` | PDFs mit WeasyPrint: Call Sheets, Freistellungsliste, Packliste, Einsatzübersicht; Vorschau mit Herunterladen, Teilen, Drucken | 0010 |

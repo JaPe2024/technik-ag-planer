@@ -5,6 +5,8 @@ from . import unit_views, views
 app_name = "inventory"
 
 urlpatterns = [
+    path("geplant/<int:pk>/menge/", unit_views.quantity_move, name="quantity_move"),
+    path("einstellungen/material/", unit_views.inventory_settings, name="settings"),
     path("material/etiketten/", unit_views.labels, name="labels"),
     path("material/<int:pk>/ausleihen/", unit_views.checkout, name="checkout"),
     path("ausleihen/<int:pk>/zurueck/", unit_views.checkin, name="checkin"),
