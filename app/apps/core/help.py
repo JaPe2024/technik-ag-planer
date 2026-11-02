@@ -80,7 +80,9 @@ TOPICS = [
             ),
             Question(
                 "Wie bekomme ich die Termine in meinen Kalender?",
-                "Jeder Eintrag hat „In Kalender übernehmen“ (.ics-Datei). Hat die AG ein "
+                "Jeder Eintrag hat „In privaten Kalender“: Google, Apple oder als Datei. "
+                "Übernommen wird eine Kopie, spätere Änderungen kommen dort nicht an. "
+                "Hat die AG ein "
                 "Google-Konto verbunden, kannst du den AG-Kalender abonnieren, sobald der Owner "
                 "ihn "
                 "für deine Google-Adresse freigegeben hat (Link in der Kalender-Ansicht).",
@@ -98,10 +100,11 @@ TOPICS = [
             ),
             Question(
                 "Wie kommen Technik-Anfragen von Lehrkräften herein?",
-                "Über den öffentlichen Link „Technik anfragen“ (Einstellungen). Neue Anfragen "
-                "erscheinen oben in der Produktionsliste und lassen sich direkt zur Produktion "
+                "Über den öffentlichen Link „Technik anfragen“ (Einstellungen → AG anpassen). "
+                "Neue Anfragen erscheinen oben in der Produktionsliste und lassen sich direkt "
+                "zur Produktion "
                 "machen. Die Ankreuzliste im Formular pflegt ihr unter Einstellungen → "
-                "Technik-Auswahl.",
+                "AG anpassen → Technik-Auswahl.",
                 PLANNERS,
             ),
         ],
@@ -133,7 +136,8 @@ TOPICS = [
         [
             Question(
                 "Wie verbinde ich das Google-Konto der AG?",
-                "Einstellungen → Google-Konto → „Mit Google verbinden“ und mit einem normalen "
+                "Einstellungen → AG anpassen → Google-Konto → „Mit Google verbinden“ und mit einem "
+                "normalen "
                 "Google-Konto der AG (kein Schulkonto) anmelden. Beim Hinweis „nicht überprüft“ "
                 "auf „Erweitert → Weiter“ und bei Drive und Kalender das Häkchen setzen.",
                 {Role.OWNER},

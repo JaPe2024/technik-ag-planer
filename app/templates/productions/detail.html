@@ -26,7 +26,7 @@
         {% include "productions/includes/status.html" with status=production.status %}
       {% endif %}
       {% if production.chat_enabled %}<a class="button button--secondary button--small" href="{% url 'board:production' production.pk %}">{% include "includes/icon.html" with name="chat" %} Chat</a>{% endif %}
-      <a class="button button--secondary button--small" href="{% url 'scheduling:ics_production' production.pk %}">In Kalender übernehmen</a>
+      <a class="button button--secondary button--small" href="{% url 'scheduling:private_calendar_production' production.pk %}" data-sheet-url>In privaten Kalender</a>
     </div>
   </header>
 
@@ -72,7 +72,7 @@
             <p class="list__subtitle"><a href="{% url 'documents:job_call_sheet' job.pk %}">Call Sheet (PDF)</a></p>
           </div>
           <div class="list__actions">
-            <a class="button button--secondary button--small" href="{% url 'scheduling:ics_job' job.pk %}" aria-label="Job {{ job.name }} in Kalender übernehmen">.ics</a>
+            <a class="icon-button" href="{% url 'scheduling:private_calendar_job' job.pk %}" data-sheet-url title="In privaten Kalender" aria-label="Job {{ job.name }} in privaten Kalender">{% include "includes/icon.html" with name="calendar" %}</a>
             {% if org_perms.MANAGE_CREW %}<a class="button button--primary button--small" href="{% url 'productions:job_crew' job.pk %}" data-sheet-url>Crew</a>{% endif %}
             {% if org_perms.MANAGE_PRODUCTIONS %}
               <a class="button button--secondary button--small" href="{% url 'productions:job_edit' job.pk %}" data-sheet-url>Bearbeiten</a>

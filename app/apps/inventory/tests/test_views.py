@@ -272,7 +272,7 @@ def test_manage_material_categories(org, owner, login, make_material):
     material.refresh_from_db()
     assert material.category is None
 
-    assert "Material-Kategorien" in client.get(reverse("organizations:settings")).content.decode()
+    assert "Material-Kategorien" in client.get(reverse("organizations:customize")).content.decode()
 
 
 def test_deleting_production_removes_its_plannings_with_cascade(org, mics, make_production):

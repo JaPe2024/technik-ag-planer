@@ -1,9 +1,14 @@
-"""Minimaler iCalendar-Export (RFC 5545) für einzelne Einträge – „In Kalender übernehmen“."""
+"""Einzelne Einträge für den privaten Kalender: iCalendar-Datei (RFC 5545) und Google-Link."""
 
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
+from urllib.parse import urlencode
 
+from django.conf import settings
 from django.utils import timezone
+
+GOOGLE_URL = "https://calendar.google.com/calendar/render"
+GOOGLE_DETAILS_MAX = 1000  # lange Texte würden den Link sprengen
 
 
 @dataclass
@@ -15,6 +20,11 @@ class IcsEvent:
     location: str = ""
     description: str = ""
     url: str = ""
+    internal: str = ""  # nur für die Datei, nie im Google-Link (z. B. Namen der Crew)
+
+    @property
+    def file_description(self):
+        return "\n".join(x for x in [self.description, self.internal] if x)
 
 
 def _escape(text):
@@ -37,10 +47,14 @@ def _fold(line):
     return "\r\n ".join(parts)
 
 
-def _dt(value):
+def _stamp(value):
     if isinstance(value, datetime):
-        return ":" + value.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
-    return ";VALUE=DATE:" + value.strftime("%Y%m%d")
+        return value.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
+    return value.strftime("%Y%m%d")
+
+
+def _dt(value):
+    return (":" if isinstance(value, datetime) else ";VALUE=DATE:") + _stamp(value)
 
 
 def build_calendar(events):
@@ -63,13 +77,32 @@ def build_calendar(events):
         ]
         if ev.location:
             lines.append(f"LOCATION:{_escape(ev.location)}")
-        if ev.description:
-            lines.append(f"DESCRIPTION:{_escape(ev.description)}")
+        if ev.file_description:
+            lines.append(f"DESCRIPTION:{_escape(ev.file_description)}")
         if ev.url:
             lines.append(f"URL:{ev.url}")
         lines.append("END:VEVENT")
     lines.append("END:VCALENDAR")
     return "\r\n".join(_fold(line) for line in lines) + "\r\n"
+
+
+def google_url(event):
+    """Link, der den Eintrag bei Google zum Speichern vorausfüllt – ohne `internal`."""
+    text = event.description
+    if len(text) > GOOGLE_DETAILS_MAX:
+        text = text[:GOOGLE_DETAILS_MAX].rstrip() + "…"
+    details = "\n\n".join(x for x in [text, event.url] if x)
+    params = {
+        "action": "TEMPLATE",
+        "text": event.summary,
+        "dates": f"{_stamp(event.start)}/{_stamp(event.end)}",
+        "ctz": settings.TIME_ZONE,
+    }
+    if event.location:
+        params["location"] = event.location
+    if details:
+        params["details"] = details
+    return f"{GOOGLE_URL}?{urlencode(params)}"
 
 
 def all_day(start_date, end_date):

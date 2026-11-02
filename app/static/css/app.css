@@ -522,6 +522,7 @@ h3 {
 }
 
 .field--checkbox input {
+  flex: none;
   width: 22px;
   height: 22px;
   accent-color: var(--color-accent);
@@ -664,6 +665,27 @@ h3 {
 a.list__item:hover,
 .list__link:hover {
   background: var(--color-surface-raised);
+}
+
+/* Einstellungen: Jede Zeile ist als Ganzes ein Link */
+.list--rows li + li > .list__item {
+  border-top: 1px solid var(--color-line);
+}
+
+.list--rows a.list__item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.stack-tight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.stack-tight p {
+  margin: 0;
 }
 
 .list__main {
@@ -1030,17 +1052,32 @@ a.list__item:hover,
 
 .segmented--choice {
   width: fit-content;
+  max-width: 100%;
+}
+
+@media (max-width: 599px) {
+  .segmented--choice {
+    display: flex;
+    width: 100%;
+  }
 }
 
 .segmented--choice label {
   position: relative;
+  flex: 1 1 0;
+  text-align: center;
   cursor: pointer;
 }
 
-.segmented--choice input {
+/* Stärker als die allgemeine Regel für Felder, die Eingaben auf volle Breite setzt */
+.segmented--choice input,
+.field .segmented--choice input {
   position: absolute;
   width: 1px;
+  min-height: 0;
   height: 1px;
+  padding: 0;
+  border: 0;
   opacity: 0;
 }
 
@@ -1282,6 +1319,8 @@ a.list__item:hover,
 
 .field input[type="date"],
 .field input[type="time"] {
+  min-width: 0;
+  max-width: 100%;
   color-scheme: dark;
 }
 
@@ -1776,14 +1815,29 @@ a.icon-button {
   color: var(--color-text-muted);
 }
 
+/* Fest am unteren Bildschirmrand, über der Handy-Leiste bzw. über der Tastatur */
 .chat-input {
-  position: sticky;
+  position: fixed;
+  right: 0;
   bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom));
+  left: 0;
+  z-index: 15;
   display: flex;
   align-items: flex-end;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
+  padding: var(--space-2) var(--space-4);
   background: var(--color-bg);
+  border-top: 1px solid var(--color-line);
+}
+
+/* Offene Tastatur: Der Abstand kommt aus der sichtbaren Bildschirmhöhe (app.js) */
+.chat-input--keyboard {
+  bottom: var(--keyboard-height, 0);
+}
+
+/* Platz, damit das feste Eingabefeld keine Nachricht verdeckt */
+.board {
+  padding-bottom: var(--chat-input-height, 64px);
 }
 
 .chat-input textarea {
@@ -1810,6 +1864,12 @@ a.icon-button {
 @media (min-width: 900px) and (orientation: landscape), (min-width: 1200px) {
   .chat-input {
     bottom: 0;
+    left: var(--sidebar-width);
+    /* Bündig mit der mittig begrenzten Inhaltsspalte */
+    padding-inline: max(
+      var(--space-4),
+      calc((100vw - var(--sidebar-width) - var(--content-max)) / 2 + var(--space-4))
+    );
   }
 }
 

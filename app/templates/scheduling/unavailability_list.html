@@ -16,7 +16,7 @@
             <span class="list__subtitle">{% if u.all_day %}ganztägig{% else %}{{ u.start_time|time:"H:i"|default:"0:00" }} – {{ u.end_time|time:"H:i"|default:"24:00" }} Uhr{% endif %}{% if u.note %} · {{ u.note }}{% endif %}</span>
           </div>
           <div class="list__actions">
-            <a class="button button--secondary button--small" href="{% url 'scheduling:ics_unavailability' u.pk %}">.ics</a>
+            <a class="icon-button" href="{% url 'scheduling:private_calendar_unavailability' u.pk %}" data-sheet-url title="In privaten Kalender" aria-label="Eintrag in privaten Kalender">{% include "includes/icon.html" with name="calendar" %}</a>
             <form method="post" action="{% url 'scheduling:unavailability_delete' u.pk %}" data-confirm="Eintrag löschen?">
               {% csrf_token %}<button type="submit" class="icon-button" aria-label="Löschen">{% include "includes/icon.html" with name="close" %}</button>
             </form>

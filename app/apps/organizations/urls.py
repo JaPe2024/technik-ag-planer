@@ -9,6 +9,7 @@ urlpatterns = [
     path("ag/wechseln/", views.switch_organization, name="switch"),
     path("einladung/<str:token>/", views.accept_invitation, name="accept_invitation"),
     path("einstellungen/", views.settings_index, name="settings"),
+    path("einstellungen/anpassen/", views.customize, name="customize"),
     path("einstellungen/mitglieder/", views.members, name="members"),
     path("einstellungen/mitglieder/einladen/", views.invite, name="invite"),
     path("einstellungen/mitglieder/<int:pk>/rolle/", views.member_role, name="member_role"),

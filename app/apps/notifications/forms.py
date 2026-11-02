@@ -1,5 +1,7 @@
 from django import forms
 
+from apps.scheduling.forms import SegmentedRadio
+
 from .models import NotificationSettings
 
 
@@ -18,7 +20,7 @@ class SettingsForm(forms.ModelForm):
             "reminder_hours",
         ]
         widgets = {
-            "reminder_mode": forms.RadioSelect,
+            "reminder_mode": SegmentedRadio,
             "reminder_time": forms.TimeInput(attrs={"type": "time"}, format="%H:%M"),
             "reminder_hours": forms.NumberInput(attrs={"min": 1, "max": 48}),
         }

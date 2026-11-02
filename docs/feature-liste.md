@@ -688,5 +688,3 @@ Die ursprünglichen Meilensteine 1–12 sind umgesetzt; für die Fork-Erweiterun
 
 - Freistellungsliste an eine Vorlage der Schule anpassen (Abschnitt 9) – sobald die Vorlage vorliegt
 - Besser gestaltete E-Mails für Einladung und „Passwort vergessen“
-
-Aktualisierung der automatisierten Prüfung: Die vollständige Testsuite im lokalen PostgreSQL-Entwicklungscontainer besteht mit **909 Tests**. Der vollständige Ruff-Lauf (`ruff check .` und `ruff format --check .`, entsprechend `make lint`) ist grün. Echte Handy-/Kameratests, visuelle Abnahme und Upstream-Review bleiben offen.

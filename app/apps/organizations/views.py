@@ -2,13 +2,14 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_not_required
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.accounts.forms import AcceptInvitationForm, LoginForm
 from apps.accounts.models import Grade
+from apps.google_sync.google_api import EXPIRED
 from apps.google_sync.services import connection_for
 from apps.inquiries.models import InquiryLink
 
@@ -25,7 +26,7 @@ from .forms import (
 from .middleware import set_active_organization
 from .models import Invitation, Membership
 from .permissions import Perm, Role
-from .settings_menu import visible_groups
+from .settings_menu import visible_customize_groups, visible_groups
 
 SETTINGS = {"active_section": "settings"}
 
@@ -57,16 +58,49 @@ def switch_organization(request):
 
 @org_required
 def settings_index(request):
+    connection = connection_for(request.organization)
     return render(
         request,
         "organizations/settings.html",
         {
             **SETTINGS,
             "groups": visible_groups(request.membership),
+            # Ohne Google-Projekt der Installation könnte der Owner nichts verbinden
+            "show_google_hint": request.membership.is_owner
+            and connection is None
+            and bool(settings.GOOGLE_OAUTH_CLIENT_ID),
+            "google_problem": _google_problem(request, connection),
+        },
+    )
+
+
+def _google_problem(request, connection):
+    """Fehler des letzten Abgleichs für den Owner; verschwindet beim nächsten Erfolg."""
+    if not request.membership.is_owner or connection is None or not connection.last_error:
+        return ""
+    if connection.last_error == EXPIRED:
+        return "Die Verbindung zu Google ist abgelaufen. Bitte neu verbinden."
+    return connection.last_error
+
+
+@org_required
+def customize(request):
+    """Unterseite „AG anpassen“: alles, was je AG einstellbar ist."""
+    groups = visible_customize_groups(request.membership)
+    if not groups:
+        raise PermissionDenied
+    connection = connection_for(request.organization)
+    return render(
+        request,
+        "organizations/customize.html",
+        {
+            **SETTINGS,
+            "groups": groups,
             "inquiry_link_active": InquiryLink.objects.filter(
                 organization=request.organization, is_active=True
             ).exists(),
-            "google_connected": connection_for(request.organization) is not None,
+            "google_connected": connection is not None,
+            "google_problem": _google_problem(request, connection),
         },
     )
 

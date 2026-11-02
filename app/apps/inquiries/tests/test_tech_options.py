@@ -149,9 +149,10 @@ def test_rights_per_role(org, owner, make_member, login, role, allowed):
 def test_menu_entry_per_role(org, owner, make_member, login, role, visible):
     client = login(_member(org, owner, make_member, role).user, org)
 
-    content = client.get(reverse("organizations:settings")).content.decode()
+    response = client.get(reverse("organizations:customize"))
 
-    assert ("Technik-Auswahl" in content) is visible
+    assert response.status_code == (200 if visible else 403)
+    assert ("Technik-Auswahl" in response.content.decode()) is visible
 
 
 def test_teacher_still_cannot_manage_public_link(org, make_member, login):
