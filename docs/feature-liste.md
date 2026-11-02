@@ -669,3 +669,4 @@ Alle Meilensteine sind umgesetzt. Vor dem Einsatz an der Schule stehen noch aus:
 
 - Freistellungsliste an eine Vorlage der Schule anpassen (Abschnitt 9) – sobald die Vorlage vorliegt
 - Besser gestaltete E-Mails für Einladung und „Passwort vergessen“
+- Kurzes Tutorial nach der ersten Kontoerstellung: die Website als App auf den Homebildschirm legen (iPhone, Android)

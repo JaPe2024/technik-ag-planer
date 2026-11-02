@@ -26,6 +26,7 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 
 **Sicherheit**
 
+- Sicherheits-Updates: `certifi`, `brotli`, `brotlicffi`, `pyasn1`
 - Betreiber-Konten können nicht mehr eingeladen werden, keiner AG beitreten und nicht Owner werden
 
 **Betrieb**
