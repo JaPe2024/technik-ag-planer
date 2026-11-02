@@ -26,6 +26,7 @@ Alle wichtigen Änderungen an diesem Projekt. Format nach [Keep a Changelog](htt
 
 **Betrieb**
 
+- Skript `deploy/betrieb/zugangsdaten.sh`: Datenbank- und Betreiber-Passwort ändern, passwortfreies sudo ein- oder ausschalten
 - Gunicorn startet ohne ungenutzten Steuerzugang, die Fehlermeldung beim Start entfällt
 
 **Sicherheit**
