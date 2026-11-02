@@ -285,6 +285,12 @@ def test_unavailability_own_entries(org, student, student_client, make_member):
         student_client.get(reverse("scheduling:ics_unavailability", args=[foreign.pk])).status_code
         == 403
     )
+    assert (
+        student_client.get(
+            reverse("scheduling:private_calendar_unavailability", args=[foreign.pk])
+        ).status_code
+        == 403
+    )
     list_content = student_client.get(reverse("scheduling:unavailability_list")).content.decode()
     assert "Klausur" in list_content
 

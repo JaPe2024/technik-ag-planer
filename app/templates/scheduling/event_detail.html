@@ -9,7 +9,7 @@
     <p class="muted">{{ event.date|date:"l, j. F Y" }} · {% if event.all_day %}ganztägig{% else %}{{ event.start_time|time:"H:i" }}–{{ event.end_time|time:"H:i" }} Uhr{% endif %}{% if event.location %} · {{ event.location }}{% endif %}</p>
     {% if event.cancelled %}<p><span class="tag tag--warning">abgesagt</span></p>{% endif %}
     <div class="toolbar">
-      <a class="button button--secondary button--small" href="{% url 'scheduling:ics_event' event.pk %}">In Kalender übernehmen</a>
+      <a class="button button--secondary button--small" href="{% url 'scheduling:private_calendar_event' event.pk %}" data-sheet-url>In privaten Kalender</a>
       {% if org_perms.CREATE_EVENTS %}
         <a class="button button--secondary button--small" href="{% url 'scheduling:event_edit' event.pk %}" data-sheet-url>Bearbeiten</a>
         <form method="post" action="{% url 'scheduling:event_cancel' event.pk %}">

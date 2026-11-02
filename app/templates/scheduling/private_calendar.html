@@ -1,0 +1,22 @@
+{% extends layout %}
+{% block title %}In privaten Kalender – Technik-AG Planer{% endblock %}
+{% block topbar_title %}Kalender{% endblock %}
+{% block content %}
+<div class="stack">
+  <div>
+    <h1 class="page-title sheet-title">In privaten Kalender</h1>
+    <p class="muted">{{ event.summary }}</p>
+  </div>
+  <ul class="menu-list">
+    {% for option in options %}
+      <li>
+        <a class="menu-item" href="{{ option.href }}"{% if option.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+          {% include "includes/icon.html" with name="calendar" %}
+          <span>{{ option.label }}<span class="menu-item__hint">{{ option.hint }}</span></span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+  <p class="field__help">Der Eintrag wird als Kopie übernommen. Spätere Änderungen in der App kommen dort nicht an. Für andere Kalender: <a href="{{ file_url }}">Datei herunterladen</a></p>
+</div>
+{% endblock %}

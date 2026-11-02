@@ -57,6 +57,10 @@ URLS = [
     ("get", "scheduling:ics_unavailability", "absence"),
     ("get", "scheduling:ics_production", "production"),
     ("get", "scheduling:ics_job", "job"),
+    ("get", "scheduling:private_calendar_event", "event"),
+    ("get", "scheduling:private_calendar_unavailability", "absence"),
+    ("get", "scheduling:private_calendar_production", "production"),
+    ("get", "scheduling:private_calendar_job", "job"),
 ]
 
 
